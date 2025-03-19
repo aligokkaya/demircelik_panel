@@ -1,7 +1,9 @@
 import React from 'react';
-import { BrowserRouter as Router } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { CssBaseline, ThemeProvider, createTheme } from '@mui/material';
 import Dashboard from './components/dashboard/Dashboard';
+import Home from './pages/Home';
+import WeatherAndMeals from './pages/WeatherAndMeals';
 
 const theme = createTheme({
   palette: {
@@ -50,15 +52,36 @@ const theme = createTheme({
   },
 });
 
-function App() {
+interface PrivateRouteProps {
+  children: React.ReactNode;
+}
+
+const PrivateRoute: React.FC<PrivateRouteProps> = ({ children }) => {
+  const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+  return isLoggedIn ? <>{children}</> : <Navigate to="/" />;
+};
+
+const App = () => {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <Router>
-        <Dashboard />
+        <Routes>
+          <Route path="/" element={<Dashboard />} />
+          <Route path="/home" element={
+            <PrivateRoute>
+              <Home />
+            </PrivateRoute>
+          } />
+          <Route path="/weather-meals" element={
+            <PrivateRoute>
+              <WeatherAndMeals />
+            </PrivateRoute>
+          } />
+        </Routes>
       </Router>
     </ThemeProvider>
   );
-}
+};
 
 export default App; 

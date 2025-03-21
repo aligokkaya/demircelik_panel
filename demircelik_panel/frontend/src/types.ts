@@ -1,4 +1,4 @@
-export interface Meal {
+export type Meal = {
     id: number;
     date: Date;
     meals: {
@@ -15,7 +15,7 @@ export interface Meal {
             time: string;
         };
     };
-}
+};
 
 export type Post = {
     id: number;

@@ -34,6 +34,8 @@ import "slick-carousel/slick/slick-theme.css";
 import { LocalizationProvider, DateCalendar } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { useNavigate } from 'react-router-dom';
+import { keyframes } from '@mui/system';
+import { HealthAndSafety, Park as Eco, Assignment } from '@mui/icons-material';
 
 type WeatherType = 'sunny' | 'cloudy' | 'rainy' | 'snowy' | 'stormy';
 
@@ -92,7 +94,7 @@ const SectionTitle = styled(Typography)(({ theme }) => ({
 const SliderCard = styled(Card)(({ theme }) => ({
     position: 'relative',
     height: 400,
-    borderRadius: 12,
+    borderRadius: 10,
     overflow: 'hidden',
     '&::before': {
         content: '""',
@@ -111,9 +113,16 @@ const SliderContent = styled(Box)(({ theme }) => ({
     bottom: 0,
     left: 0,
     right: 0,
-    padding: theme.spacing(4),
+    padding: theme.spacing(6),
+    paddingTop: theme.spacing(12),
     color: '#fff',
     zIndex: 2,
+    background: 'linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.6) 50%, rgba(0,0,0,0) 100%)',
+    transform: 'translateY(0)',
+    transition: 'transform 0.3s ease-in-out',
+    '&:hover': {
+        transform: 'translateY(-10px)'
+    }
 }));
 
 const LoginSection = styled(Paper)(({ theme }) => ({
@@ -148,6 +157,187 @@ const MealCard = styled(Card)(({ color }: { color: string }) => ({
         borderRadius: '0 0 0 100%'
     }
 }));
+
+// Animasyon tanımları
+const slideIn = keyframes`
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+`;
+
+const fadeIn = keyframes`
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+`;
+
+const textGlow = keyframes`
+    0% {
+        transform: scale(1);
+        text-shadow: 0 0 5px rgba(255,255,255,0.5);
+        letter-spacing: 1px;
+    }
+    25% {
+        transform: scale(1.1);
+        text-shadow: 0 0 20px rgba(255,255,255,0.8);
+        letter-spacing: 2px;
+    }
+    50% {
+        transform: scale(1);
+        text-shadow: 0 0 5px rgba(255,255,255,0.5);
+        letter-spacing: 1px;
+    }
+    75% {
+        transform: scale(1.1);
+        text-shadow: 0 0 20px rgba(255,255,255,0.8);
+        letter-spacing: 2px;
+    }
+    100% {
+        transform: scale(1);
+        text-shadow: 0 0 5px rgba(255,255,255,0.5);
+        letter-spacing: 1px;
+    }
+`;
+
+const CategoryLabel = styled(Box)(({ color = '#ff0000' }: { color?: string }) => ({
+    position: 'absolute',
+    top: 30,
+    right: -20,
+    backgroundColor: color,
+    padding: '10px 30px',
+    minWidth: 200,
+    transform: 'rotate(45deg)',
+    zIndex: 10,
+    animation: `${slideIn} 0.5s ease-out forwards`,
+    boxShadow: '0 4px 8px rgba(0,0,0,0.3)',
+    '&:hover': {
+        transform: 'rotate(45deg) scale(1.05)',
+        transition: 'transform 0.3s ease'
+    },
+    '& .category-text': {
+        animation: `${textGlow} 4s ease-in-out infinite`,
+        display: 'block',
+        transition: 'all 0.3s ease',
+        fontWeight: 800,
+        fontSize: '1.2rem',
+        background: 'linear-gradient(45deg, rgba(255,255,255,1) 0%, rgba(255,255,255,0.8) 50%, rgba(255,255,255,1) 100%)',
+        backgroundSize: '200% auto',
+        WebkitBackgroundClip: 'text',
+        WebkitTextFillColor: 'transparent',
+        textShadow: '0 0 10px rgba(255,255,255,0.5)',
+        filter: 'drop-shadow(0 0 2px rgba(255,255,255,0.3))'
+    }
+}));
+
+// Özel stil bileşenleri
+interface SectionBannerProps {
+    color?: string;
+    backgroundImage?: string;
+    children: React.ReactNode;
+}
+
+const SectionBanner = styled(Box)<SectionBannerProps>(({ theme, color = '#ff0000', backgroundImage }) => ({
+    position: 'relative',
+    padding: '24px',
+    marginBottom: '24px',
+    borderRadius: '12px',
+    overflow: 'hidden',
+    color: 'white',
+    minHeight: '120px',
+    display: 'flex',
+    alignItems: 'center',
+    background: `linear-gradient(135deg, ${color} 0%, ${color}dd 100%)`,
+    '&::before': {
+        content: '""',
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundImage: backgroundImage ? `url(${backgroundImage})` : 'none',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        opacity: 0.2,
+        animation: `${fadeIn} 1s ease-out`,
+    },
+    '& .content': {
+        position: 'relative',
+        zIndex: 1,
+        animation: `${slideIn} 0.5s ease-out`,
+    }
+}));
+
+const renderSectionBanner = (category: string) => {
+    let title = '';
+    let subtitle = '';
+    let color = '';
+    let icon = null;
+    let image = '';
+
+    switch (category) {
+        case 'isg':
+            title = 'İSG HABERLERİ';
+            subtitle = 'İş Sağlığı ve Güvenliği Güncel Bildirimleri';
+            color = '#d32f2f';
+            icon = <HealthAndSafety sx={{ fontSize: 40 }} />;
+            image = '/images/isg-background.jpg';
+            break;
+        case 'environment':
+            title = 'ÇEVRE BÜLTENİ';
+            subtitle = 'Çevre ve Sürdürülebilirlik Haberleri';
+            color = '#2e7d32';
+            icon = <Eco sx={{ fontSize: 40 }} />;
+            image = '/images/environment-background.jpg';
+            break;
+        case 'quality':
+            title = 'KALİTE KÖŞESİ';
+            subtitle = 'Kalite Yönetim Sistemi Güncellemeleri';
+            color = '#1565c0';
+            icon = <Assignment sx={{ fontSize: 40 }} />;
+            image = '/images/quality-background.jpg';
+            break;
+        default:
+            title = 'GENEL DUYURULAR';
+            subtitle = 'Şirket Geneli Önemli Bilgilendirmeler';
+            color = '#435785';
+            icon = <NotificationsIcon sx={{ fontSize: 40 }} />;
+            image = '/images/general-background.jpg';
+    }
+
+    return (
+        <SectionBanner color={color} backgroundImage={image}>
+            <Box className="content" sx={{ width: '100%' }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 1 }}>
+                    {icon}
+                    <Box>
+                        <Typography variant="h5" sx={{ 
+                            fontWeight: 800,
+                            textShadow: '0 2px 4px rgba(0,0,0,0.2)',
+                            letterSpacing: '0.5px'
+                        }}>
+                            {title}
+                        </Typography>
+                        <Typography variant="subtitle1" sx={{ 
+                            opacity: 0.9,
+                            textShadow: '0 2px 4px rgba(0,0,0,0.2)',
+                            fontWeight: 500
+                        }}>
+                            {subtitle}
+                        </Typography>
+                    </Box>
+                </Box>
+            </Box>
+        </SectionBanner>
+    );
+};
 
 const Dashboard: React.FC = () => {
     const [posts, setPosts] = useState<{[key: string]: Post[]}>({
@@ -364,25 +554,72 @@ const Dashboard: React.FC = () => {
     const sliderItems = [
         {
             id: 1,
-            title: "Yeni Fabrika Açılışımız",
-            description: "İstanbul'daki yeni üretim tesisimizin açılış töreni gerçekleştirildi",
-            image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=1600",
-            date: "15 Mart 2024"
+            title: "SPOR HABERLERİ",
+            description: "Şirket Futbol Turnuvası Başlıyor! Departmanlar Arası Maçlar Bu Hafta Başlıyor",
+            image: "https://images.unsplash.com/photo-1579952363873-27f3bade9f55?auto=format&fit=crop&w=1600&q=80",
+            date: "15 Mart 2024",
+            gradient: "linear-gradient(to bottom, rgba(244, 67, 54, 0), rgba(244, 67, 54, 0.9))",
+            category: {
+                name: "SPOR",
+                icon: "⚽",
+                color: "#f44336"
+            },
+            stats: {
+                label: "Katılımcı Takım",
+                value: "8 Takım"
+            }
         },
         {
             id: 2,
-            title: "ISO 9001:2015 Sertifikası Aldık",
-            description: "Kalite yönetim sistemimiz uluslararası standartlara uygunluğu tescillendi",
-            image: "https://images.unsplash.com/photo-1553877522-43269d4ea984?auto=format&fit=crop&w=1600",
-            date: "10 Mart 2024"
+            title: "ÜRETİM BAŞARILARI",
+            description: "Yeni Üretim Rekoruna İmza Attık! Aylık Üretim Hedefimizi %15 Aştık",
+            image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=1600&q=80",
+            date: "14 Mart 2024",
+            gradient: "linear-gradient(to bottom, rgba(33, 150, 243, 0), rgba(33, 150, 243, 0.9))",
+            category: {
+                name: "ÜRETİM",
+                icon: "🏭",
+                color: "#2196f3"
+            },
+            stats: {
+                label: "Verimlilik Artışı",
+                value: "+15%"
+            }
         },
         {
             id: 3,
-            title: "Sürdürülebilirlik Raporu 2024",
-            description: "Yıllık sürdürülebilirlik raporumuz yayınlandı",
-            image: "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1600",
-            date: "1 Mart 2024"
+            title: "SOSYAL ETKİNLİKLER",
+            description: "Geleneksel Bahar Şenliğimiz 20 Mart'ta Başlıyor! Tüm Çalışanlarımız Davetlidir",
+            image: "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&w=1600&q=80",
+            date: "13 Mart 2024",
+            gradient: "linear-gradient(to bottom, rgba(76, 175, 80, 0), rgba(76, 175, 80, 0.9))",
+            category: {
+                name: "ETKİNLİK",
+                icon: "🎉",
+                color: "#4caf50"
+            },
+            stats: {
+                label: "Katılımcı Sayısı",
+                value: "250+"
+            }
         },
+        {
+            id: 4,
+            title: "İSG DUYURULARI",
+            description: "Sıfır Kaza Hedefimizde 365 Günü Geride Bıraktık! Güvenlik Önce Gelir",
+            image: "https://images.unsplash.com/photo-1582139329536-e7284fece509?auto=format&fit=crop&w=1600&q=80",
+            date: "12 Mart 2024",
+            gradient: "linear-gradient(to bottom, rgba(255, 152, 0, 0), rgba(255, 152, 0, 0.9))",
+            category: {
+                name: "İSG",
+                icon: "⚠️",
+                color: "#ff9800"
+            },
+            stats: {
+                label: "Güvenli Gün",
+                value: "365"
+            }
+        }
     ];
 
     useEffect(() => {
@@ -501,36 +738,120 @@ const Dashboard: React.FC = () => {
                     {sliderItems.map((item) => (
                         <div key={item.id}>
                             <SliderCard>
+                                <CategoryLabel color={item.category.color}>
+                                    <Typography className="category-text" sx={{ 
+                                        color: 'white', 
+                                        fontWeight: 800,
+                                        textAlign: 'center',
+                                        fontSize: '1.2rem',
+                                        textShadow: '1px 1px 2px rgba(0,0,0,0.2)',
+                                        letterSpacing: '1px'
+                                    }}>
+                                        {item.category.name} HABERLERİ
+                                    </Typography>
+                                </CategoryLabel>
                                 <CardMedia
                                     component="img"
                                     height="400"
                                     image={item.image}
                                     alt={item.title}
-                                    sx={{ objectFit: 'cover' }}
+                                    sx={{ 
+                                        objectFit: 'cover',
+                                        filter: 'brightness(0.85)',
+                                        transition: 'all 0.3s ease-in-out',
+                                        '&:hover': {
+                                            filter: 'brightness(0.95)',
+                                            transform: 'scale(1.02)'
+                                        }
+                                    }}
                                 />
+                                <Box sx={{
+                                    position: 'absolute',
+                                    top: 0,
+                                    left: 0,
+                                    right: 0,
+                                    bottom: 0,
+                                    background: item.gradient,
+                                    zIndex: 1
+                                }} />
                                 <SliderContent>
-                                    <Typography variant="caption" sx={{ 
-                                        color: '#fff',
-                                        opacity: 0.8,
-                                        mb: 1,
-                                        display: 'block'
+                                    <Box sx={{ 
+                                        display: 'flex', 
+                                        alignItems: 'center', 
+                                        gap: 2,
+                                        mb: 3
                                     }}>
-                                        {item.date}
-                                    </Typography>
+                                        <Chip
+                                            label={
+                                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                                    <Typography sx={{ fontSize: '1.25rem' }}>{item.category.icon}</Typography>
+                                                    <Typography sx={{ fontWeight: 600 }}>{item.category.name}</Typography>
+                                                </Box>
+                                            }
+                                            sx={{
+                                                bgcolor: `${item.category.color}dd`,
+                                                color: 'white',
+                                                borderRadius: '8px',
+                                                height: '32px',
+                                                '& .MuiChip-label': {
+                                                    px: 2
+                                                }
+                                            }}
+                                        />
+                                        <Typography variant="caption" sx={{ 
+                                            color: '#fff',
+                                            opacity: 0.9,
+                                            fontSize: '0.875rem',
+                                            fontWeight: 500
+                                        }}>
+                                            {item.date}
+                                        </Typography>
+                                    </Box>
                                     <Typography variant="h3" sx={{ 
-                                        fontWeight: 700,
-                                        mb: 2, 
-                                        fontSize: { xs: '2rem', md: '3rem' }
+                                        fontWeight: 800,
+                                        mb: 2.5, 
+                                        fontSize: { xs: '1.75rem', md: '2.5rem' },
+                                        textShadow: '2px 2px 4px rgba(0,0,0,0.3)',
+                                        letterSpacing: '0.5px',
+                                        lineHeight: 1.2
                                     }}>
                                         {item.title}
                                     </Typography>
                                     <Typography variant="h6" sx={{ 
                                         fontWeight: 400,
-                                        opacity: 0.9,
-                                        mb: 3
+                                        opacity: 0.95,
+                                        mb: 4,
+                                        textShadow: '1px 1px 2px rgba(0,0,0,0.2)',
+                                        fontSize: '1.125rem',
+                                        maxWidth: '90%',
+                                        lineHeight: 1.6
                                     }}>
                                         {item.description}
                                     </Typography>
+                                    <Box sx={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: 1.5,
+                                        background: 'rgba(255,255,255,0.15)',
+                                        backdropFilter: 'blur(10px)',
+                                        borderRadius: '12px',
+                                        p: 2,
+                                        width: 'fit-content'
+                                    }}>
+                                        <Typography variant="body2" sx={{ 
+                                            opacity: 0.9,
+                                            fontSize: '0.875rem',
+                                            fontWeight: 500
+                                        }}>
+                                            {item.stats.label}:
+                                        </Typography>
+                                        <Typography variant="h6" sx={{ 
+                                            fontWeight: 700,
+                                            fontSize: '1rem'
+                                        }}>
+                                            {item.stats.value}
+                                        </Typography>
+                                    </Box>
                                 </SliderContent>
                             </SliderCard>
                         </div>
@@ -980,11 +1301,7 @@ const Dashboard: React.FC = () => {
                 <Grid container item xs={12} spacing={3}>
                     {Object.entries(posts).map(([category, categoryPosts]) => (
                         <Grid item xs={12} key={category}>
-                            <SectionTitle>
-                                {category === 'isg' ? 'İSG HABERLERİ' :
-                                 category === 'environment' ? 'ÇEVRE BÜLTENİ' :
-                                 category === 'quality' ? 'KALİTE KÖŞESİ' : 'GENEL DUYURULAR'}
-                            </SectionTitle>
+                            {renderSectionBanner(category)}
                             <Grid container spacing={3}>
                                 {categoryPosts.map((post: Post) => (
                                     <Grid item xs={12} md={6} key={post.id}>

@@ -48,8 +48,6 @@ type WeatherTypes = {
     }
 }
 
-
-
 type DailyWeather = {
     day: string;
     high: number;
@@ -350,6 +348,7 @@ const Dashboard: React.FC = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
+    const [currentWeather, setCurrentWeather] = useState<WeatherType>('sunny');
     const navigate = useNavigate();
 
     // Hava durumu tipleri ve arka plan stilleri
@@ -386,23 +385,42 @@ const Dashboard: React.FC = () => {
         }
     };
 
-    // Örnek hava durumu verileri (gerçek API'den gelecek)
-    const weatherData = {
+    // Rastgele hava durumu seçme fonksiyonu
+    const getRandomWeather = () => {
+        const weatherTypes: WeatherType[] = ['sunny', 'cloudy', 'rainy', 'snowy', 'stormy'];
+        const randomIndex = Math.floor(Math.random() * weatherTypes.length);
+        return weatherTypes[randomIndex];
+    };
+
+    // Sayfa yüklendiğinde ve her yenilendiğinde rastgele hava durumu seç
+    useEffect(() => {
+        const newWeather = getRandomWeather();
+        setCurrentWeather(newWeather);
+    }, []);
+
+    // Hava durumu verileri
+    const weatherData = useMemo(() => ({
         hourly: [...Array(8)].map((_, index) => ({
             time: `${12 + index}:00`,
-            temp: 18 + index,
-            type: 'rainy' as WeatherType
+            temp: currentWeather === 'sunny' ? 25 + index : 
+                  currentWeather === 'cloudy' ? 20 + index :
+                  currentWeather === 'rainy' ? 18 + index :
+                  currentWeather === 'snowy' ? 0 + index : 15 + index,
+            type: currentWeather as WeatherType
         })),
-        daily: [
-            { day: 'Pazartesi', high: 20, low: 15, type: 'rainy' as WeatherType },
-            { day: 'Salı', high: 19, low: 14, type: 'rainy' as WeatherType },
-            { day: 'Çarşamba', high: 21, low: 16, type: 'cloudy' as WeatherType },
-            { day: 'Perşembe', high: 22, low: 17, type: 'rainy' as WeatherType },
-            { day: 'Cuma', high: 20, low: 15, type: 'rainy' as WeatherType },
-            { day: 'Cumartesi', high: 19, low: 14, type: 'cloudy' as WeatherType },
-            { day: 'Pazar', high: 21, low: 16, type: 'rainy' as WeatherType }
-        ] as DailyWeather[]
-    };
+        daily: [...Array(7)].map((_, index) => {
+            const baseTemp = currentWeather === 'sunny' ? 28 :
+                           currentWeather === 'cloudy' ? 22 :
+                           currentWeather === 'rainy' ? 20 :
+                           currentWeather === 'snowy' ? 0 : 25;
+            return {
+                day: ['Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi', 'Pazar'][index],
+                high: baseTemp + Math.floor(Math.random() * 5),
+                low: baseTemp - Math.floor(Math.random() * 5),
+                type: currentWeather as WeatherType
+            };
+        })
+    }), [currentWeather]);
 
     // Dummy posts data
     const dummyPosts = useMemo(() => ({
@@ -870,7 +888,7 @@ const Dashboard: React.FC = () => {
                             borderRadius: 2,
                             boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
                             overflow: 'hidden',
-                            background: weatherTypes['rainy'].gradient,
+                            background: weatherTypes[currentWeather].gradient,
                             color: 'white',
                             position: 'relative'
                         }}>
@@ -880,7 +898,7 @@ const Dashboard: React.FC = () => {
                                 left: 0,
                                 right: 0,
                                 bottom: 0,
-                                background: weatherTypes['rainy'].overlay,
+                                background: weatherTypes[currentWeather].overlay,
                                 zIndex: 1
                             }} />
                             <CardContent sx={{ position: 'relative', zIndex: 2 }}>
@@ -891,7 +909,7 @@ const Dashboard: React.FC = () => {
                                         alignItems: 'center',
                                         gap: 1
                                     }}>
-                                        {weatherTypes['rainy'].icon}
+                                        {weatherTypes[currentWeather].icon}
                                         24 Saatlik Tahmin
                                     </Typography>
                                     <Typography variant="subtitle1" sx={{ opacity: 0.9 }}>
@@ -945,7 +963,7 @@ const Dashboard: React.FC = () => {
                             borderRadius: 2,
                             boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
                             overflow: 'hidden',
-                            background: weatherTypes['rainy'].gradient,
+                            background: weatherTypes[currentWeather].gradient,
                             color: 'white',
                             position: 'relative'
                         }}>
@@ -955,7 +973,7 @@ const Dashboard: React.FC = () => {
                                 left: 0,
                                 right: 0,
                                 bottom: 0,
-                                background: weatherTypes['rainy'].overlay,
+                                background: weatherTypes[currentWeather].overlay,
                                 zIndex: 1
                             }} />
                             <CardContent sx={{ position: 'relative', zIndex: 2 }}>
@@ -966,7 +984,7 @@ const Dashboard: React.FC = () => {
                                         alignItems: 'center',
                                         gap: 1
                                     }}>
-                                        {weatherTypes['rainy'].icon}
+                                        {weatherTypes[currentWeather].icon}
                                         Haftalık Tahmin
                                     </Typography>
                                     <Typography variant="subtitle1" sx={{ opacity: 0.9 }}>

@@ -19,7 +19,6 @@ import WbSunnyIcon from '@mui/icons-material/WbSunny';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import RestaurantIcon from '@mui/icons-material/Restaurant';
-import PersonIcon from '@mui/icons-material/Person';
 import LockIcon from '@mui/icons-material/Lock';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import CloudIcon from '@mui/icons-material/Cloud';
@@ -48,12 +47,6 @@ type WeatherTypes = {
     }
 }
 
-type DailyWeather = {
-    day: string;
-    high: number;
-    low: number;
-    type: WeatherType;
-}
 
 const NewsCard = styled(Card)(({ theme }) => ({
     height: '100%',
@@ -67,25 +60,6 @@ const NewsCard = styled(Card)(({ theme }) => ({
     '&:hover': {
         transform: 'translateY(-2px)',
         boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
-    },
-}));
-
-const SectionTitle = styled(Typography)(({ theme }) => ({
-    fontWeight: 800,
-    marginBottom: theme.spacing(3),
-    fontSize: '1.5rem',
-    color: '#1a237e',
-    position: 'relative',
-    paddingBottom: theme.spacing(1),
-    '&::after': {
-        content: '""',
-        position: 'absolute',
-        bottom: 0,
-        left: 0,
-        width: '40px',
-        height: '4px',
-        backgroundColor: '#f50057',
-        borderRadius: '2px',
     },
 }));
 
@@ -273,30 +247,9 @@ const SectionBanner = styled(Box)<SectionBannerProps>(({ theme, color = '#ff0000
     }
 }));
 
-const WeatherTabs = styled(Box)(({ theme }) => ({
-    display: 'flex',
-    gap: '4px',
-    marginBottom: '20px',
-    overflowX: 'auto',
-    '&::-webkit-scrollbar': {
-        display: 'none'
-    },
-    '-ms-overflow-style': 'none',
-    'scrollbar-width': 'none'
-}));
 
-const WeatherTab = styled(Button)(({ active }: { active?: boolean }) => ({
-    backgroundColor: active ? '#FFD700' : 'rgba(255, 255, 255, 0.1)',
-    color: active ? '#000' : '#fff',
-    padding: '8px 16px',
-    borderRadius: '20px',
-    minWidth: 'auto',
-    fontSize: '0.875rem',
-    fontWeight: 500,
-    '&:hover': {
-        backgroundColor: active ? '#FFD700' : 'rgba(255, 255, 255, 0.2)',
-    }
-}));
+
+
 
 const WeatherCard = styled(Box)(({ theme }) => ({
     backgroundColor: 'rgba(255, 255, 255, 0.1)',
@@ -315,16 +268,6 @@ const WeatherCard = styled(Box)(({ theme }) => ({
     }
 }));
 
-const WeatherInfoBox = styled(Box)(({ theme }) => ({
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
-    borderRadius: '12px',
-    padding: '16px',
-    display: 'flex',
-    alignItems: 'center',
-    gap: '12px',
-    width: '100%',
-    marginBottom: '8px'
-}));
 
 const TemperatureGraph = styled(Box)(({ theme }) => ({
     position: 'relative',
@@ -468,43 +411,32 @@ const DailyTempGraph = styled(Box)(({ theme }) => ({
 
 const EventListItem = styled(Box)(({ color = '#1a76d2' }: { color?: string }) => ({
     position: 'relative',
-    padding: '20px',
-    marginBottom: '16px',
+    padding: '16px',
+    marginBottom: '12px',
     backgroundColor: '#fff',
-    borderRadius: '12px',
-    boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
-    transition: 'all 0.3s ease',
+    borderRadius: '10px',
+    boxShadow: '0 2px 4px rgba(0,0,0,0.03)',
+    border: '1px solid #f0f0f0',
+    transition: 'all 0.2s ease',
     '&::before': {
         content: '""',
         position: 'absolute',
         left: 0,
-        top: 0,
-        bottom: 0,
-        width: '4px',
+        top: '50%',
+        transform: 'translateY(-50%)',
+        height: '60%',
+        width: '3px',
         backgroundColor: color,
-        borderRadius: '4px 0 0 4px'
+        borderRadius: '2px'
     },
     '&:hover': {
         transform: 'translateX(4px)',
-        boxShadow: '0 4px 8px rgba(0,0,0,0.1)'
+        boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
+        borderColor: color
     }
 }));
 
-const AvatarGroup = styled(Box)({
-    display: 'flex',
-    alignItems: 'center',
-    '& .MuiAvatar-root': {
-        width: 32,
-        height: 32,
-        border: '2px solid #fff',
-        marginLeft: -8,
-        '&:first-of-type': {
-            marginLeft: 0
-        }
-    }
-});
-
-const Dashboard: React.FC = () => {
+export const Dashboard: React.FC = () => {
     const [posts, setPosts] = useState<{[key: string]: Post[]}>({
         isg: [],
         environment: [],
@@ -516,7 +448,7 @@ const Dashboard: React.FC = () => {
     const [password, setPassword] = useState('');
     const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
     const [currentWeather, setCurrentWeather] = useState<WeatherType>('sunny');
-    const [activeTab, setActiveTab] = useState('hourly');
+    const [activeTab] = useState('hourly');
     const navigate = useNavigate();
 
     // Hava durumu tipleri ve arka plan stilleri
@@ -1136,16 +1068,11 @@ const Dashboard: React.FC = () => {
                 {!isLoggedIn ? (
                     <>
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                            <Typography variant="h6" sx={{ 
-                                color: '#1a237e',
-                                fontWeight: 600,
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: 1
-                            }}>
-                                <PersonIcon />
-                                Kullanıcı Girişi
-                            </Typography>
+                            <img 
+                                src="/logo.png" 
+                                alt="Demirçelik Logo" 
+                                style={{ height: '40px', objectFit: 'contain' }} 
+                            />
                         </Box>
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                             <TextField
@@ -1283,14 +1210,14 @@ const Dashboard: React.FC = () => {
                                                 }
                                             }}
                                         />
-                                    <Typography variant="caption" sx={{ 
-                                        color: '#fff',
+                                        <Typography variant="caption" sx={{ 
+                                            color: '#fff',
                                             opacity: 0.9,
                                             fontSize: '0.875rem',
                                             fontWeight: 500
-                                    }}>
-                                        {item.date}
-                                    </Typography>
+                                        }}>
+                                            {item.date}
+                                        </Typography>
                                     </Box>
                                     <Typography variant="h3" sx={{ 
                                         fontWeight: 800,
@@ -1346,11 +1273,12 @@ const Dashboard: React.FC = () => {
 
             {/* Ana Grid Container */}
             <Grid container spacing={3}>
-                {/* Hava Durumu, Takvim ve Yemek Menüsü Grid */}
+                {/* Hava Durumu ve Takvim Grid */}
                 <Grid container item xs={12} spacing={3}>
-                    {/* Hava Durumu Bölümü */}
+                    {/* Hava Durumu Kartı */}
                     <Grid item xs={12} md={6}>
                         <Card sx={{ 
+                            height: '100%',
                             borderRadius: 2,
                             overflow: 'hidden',
                             background: weatherTypes[currentWeather].gradient,
@@ -1535,290 +1463,299 @@ const Dashboard: React.FC = () => {
                         </Card>
                     </Grid>
 
-                    {/* Takvim ve Yemek Menüsü Bölümü */}
+                    {/* Takvim ve Yemek Kartları */}
                     <Grid item xs={12} md={6}>
-                        <Card sx={{ 
-                            borderRadius: 2,
-                            boxShadow: '0 8px 32px rgba(0,0,0,0.06)',
-                            mb: 3,
-                            background: 'linear-gradient(145deg, #ffffff 0%, #f8f9ff 100%)',
-                            border: '1px solid rgba(230, 232, 240, 0.5)',
-                            overflow: 'visible'
+                        <Box sx={{ 
+                            height: '100%', 
+                            display: 'flex', 
+                            flexDirection: 'column'
                         }}>
-                            <CardContent sx={{ p: 3 }}>
-                                <Box sx={{ 
-                                    display: 'flex', 
-                                    alignItems: 'center', 
-                                    justifyContent: 'space-between',
-                                    mb: 3
-                                }}>
-                                <Typography variant="h6" sx={{ 
-                                    fontWeight: 700,
-                                    color: '#1a237e',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                        gap: 1,
-                                        fontSize: '1.25rem'
-                                }}>
-                                        <RestaurantIcon sx={{ fontSize: 24 }} />
-                                        YEMEK TAKVİMİ
-                                </Typography>
-                                    <Typography variant="body1" sx={{ 
+                            {/* Calendar Card */}
+                            <Card sx={{ 
+                                borderRadius: 2,
+                                boxShadow: '0 8px 32px rgba(0,0,0,0.06)',
+                                mb: 3,
+                                flex: '0 0 auto'
+                            }}>
+                                <CardContent sx={{ p: 3 }}>
+                                    <Box sx={{ 
+                                        display: 'flex', 
+                                        alignItems: 'center', 
+                                        justifyContent: 'space-between',
+                                        mb: 3
+                                    }}>
+                                    <Typography variant="h6" sx={{ 
+                                        fontWeight: 700,
                                         color: '#1a237e',
                                         display: 'flex',
                                         alignItems: 'center',
-                                        gap: 0.5,
-                                        fontWeight: 600,
-                                        backgroundColor: 'rgba(26, 35, 126, 0.08)',
-                                        padding: '6px 12px',
-                                        borderRadius: '20px',
-                                        fontSize: '0.9rem'
+                                            gap: 1,
+                                            fontSize: '1.25rem'
                                     }}>
-                                        {format(selectedDate || new Date(), 'dd MMMM yyyy', { locale: tr })}
+                                            <RestaurantIcon sx={{ fontSize: 24 }} />
+                                            YEMEK TAKVİMİ
                                     </Typography>
-                                </Box>
-                                <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={tr}>
-                                    <DateCalendar 
-                                        value={selectedDate}
-                                        onChange={(newValue) => {
-                                            setSelectedDate(newValue);
-                                        }}
-                                        sx={{
-                                            width: '100%',
-                                            maxWidth: '100%',
-                                            margin: '0 auto',
-                                            backgroundColor: 'white',
-                                            padding: '24px',
-                                            borderRadius: '16px',
-                                            '& .MuiPickersDay-root': {
-                                                borderRadius: '12px',
-                                                fontWeight: 500,
-                                                fontSize: '1.125rem',
-                                                width: '40px !important',
-                                                height: '40px !important',
-                                                margin: '0px',
-                                                color: '#4B5563',
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                justifyContent: 'center',
-                                                '&:hover': {
-                                                    backgroundColor: '#F3F4F6',
-                                                },
-                                                '&.Mui-selected': {
-                                                    backgroundColor: '#4F46E5',
-                                                    color: 'white',
-                                                    fontWeight: 600,
-                                                    position: 'relative',
+                                        <Typography variant="body1" sx={{ 
+                                            color: '#1a237e',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: 0.5,
+                                            fontWeight: 600,
+                                            backgroundColor: 'rgba(26, 35, 126, 0.08)',
+                                            padding: '6px 12px',
+                                            borderRadius: '20px',
+                                            fontSize: '0.9rem'
+                                        }}>
+                                            {format(selectedDate || new Date(), 'dd MMMM yyyy', { locale: tr })}
+                                        </Typography>
+                                    </Box>
+                                    <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={tr}>
+                                        <DateCalendar 
+                                            value={selectedDate}
+                                            onChange={(newValue) => {
+                                                setSelectedDate(newValue);
+                                            }}
+                                            sx={{
+                                                width: '100%',
+                                                maxWidth: '100%',
+                                                margin: '0 auto',
+                                                backgroundColor: 'white',
+                                                padding: '24px',
+                                                borderRadius: '16px',
+                                                '& .MuiPickersDay-root': {
+                                                    borderRadius: '12px',
+                                                    fontWeight: 500,
+                                                    fontSize: '1.125rem',
+                                                    width: '40px !important',
+                                                    height: '40px !important',
+                                                    margin: '0px',
+                                                    color: '#4B5563',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'center',
                                                     '&:hover': {
-                                                        backgroundColor: '#4F46E5',
+                                                        backgroundColor: '#F3F4F6',
                                                     },
-                                                    '&::after': {
-                                                        content: '""',
-                                                        position: 'absolute',
-                                                        right: 0,
-                                                        bottom: 0,
-                                                        width: '8px',
-                                                        height: '8px',
-                                                        backgroundColor: 'white',
-                                                        borderRadius: '2px',
-                                                        transform: 'translate(-4px, -4px)'
+                                                    '&.Mui-selected': {
+                                                        backgroundColor: '#4F46E5',
+                                                        color: 'white',
+                                                        fontWeight: 600,
+                                                        position: 'relative',
+                                                        '&:hover': {
+                                                            backgroundColor: '#4F46E5',
+                                                        },
+                                                        '&::after': {
+                                                            content: '""',
+                                                            position: 'absolute',
+                                                            right: 0,
+                                                            bottom: 0,
+                                                            width: '8px',
+                                                            height: '8px',
+                                                            backgroundColor: 'white',
+                                                            borderRadius: '2px',
+                                                            transform: 'translate(-4px, -4px)'
+                                                        }
                                                     }
+                                                },
+                                                '& .MuiDayCalendar-weekDayLabel': {
+                                                    color: '#374151',
+                                                    fontWeight: 600,
+                                                    fontSize: '0.875rem',
+                                                    width: '40px !important',
+                                                    height: '40px !important',
+                                                    margin: '0px',
+                                                    textTransform: 'uppercase',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'center'
+                                                },
+                                                '& .MuiDayCalendar-header': {
+                                                    justifyContent: 'space-between',
+                                                    paddingBottom: '8px',
+                                                    borderBottom: 'none',
+                                                    margin: '0 8px'
+                                                },
+                                                '& .MuiPickersCalendarHeader-root': {
+                                                    paddingLeft: '8px',
+                                                    paddingRight: '8px',
+                                                    marginTop: '0',
+                                                    marginBottom: '8px'
+                                                },
+                                                '& .MuiDayCalendar-monthContainer': {
+                                                    minHeight: 'unset',
+                                                    margin: '0 8px'
+                                                },
+                                                '& .MuiDayCalendar-weekContainer': {
+                                                    justifyContent: 'space-between',
+                                                    margin: '0'
+                                                },
+                                                '& .MuiPickersCalendarHeader-label': {
+                                                    fontWeight: 600,
+                                                    fontSize: '1.25rem',
+                                                    color: '#111827',
+                                                    textTransform: 'capitalize',
+                                                    marginBottom: '8px'
+                                                },
+                                                '& .MuiPickersDay-today': {
+                                                    backgroundColor: '#F3F4F6',
+                                                    color: '#111827',
+                                                    fontWeight: 600,
+                                                    border: 'none'
+                                                },
+                                                '& .MuiPickersDay-dayOutsideMonth': {
+                                                    color: '#9CA3AF',
+                                                    fontWeight: 400
+                                                },
+                                                '& .MuiPickersCalendarHeader-switchViewButton': {
+                                                    display: 'none'
                                                 }
-                                            },
-                                            '& .MuiDayCalendar-weekDayLabel': {
-                                                color: '#374151',
-                                                fontWeight: 600,
-                                                fontSize: '0.875rem',
-                                                width: '40px !important',
-                                                height: '40px !important',
-                                                margin: '0px',
-                                                textTransform: 'uppercase',
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                justifyContent: 'center'
-                                            },
-                                            '& .MuiDayCalendar-header': {
-                                                justifyContent: 'space-between',
-                                                paddingBottom: '8px',
-                                                borderBottom: 'none',
-                                                margin: '0 8px'
-                                            },
-                                            '& .MuiPickersCalendarHeader-root': {
-                                                paddingLeft: '8px',
-                                                paddingRight: '8px',
-                                                marginTop: '0',
-                                                marginBottom: '8px'
-                                            },
-                                            '& .MuiDayCalendar-monthContainer': {
-                                                minHeight: 'unset',
-                                                margin: '0 8px'
-                                            },
-                                            '& .MuiDayCalendar-weekContainer': {
-                                                justifyContent: 'space-between',
-                                                margin: '0'
-                                            },
-                                            '& .MuiPickersCalendarHeader-label': {
-                                                fontWeight: 600,
-                                                fontSize: '1.25rem',
-                                                color: '#111827',
-                                                textTransform: 'capitalize',
-                                                marginBottom: '8px'
-                                            },
-                                            '& .MuiPickersDay-today': {
-                                                backgroundColor: '#F3F4F6',
-                                                color: '#111827',
-                                                fontWeight: 600,
-                                                border: 'none'
-                                            },
-                                            '& .MuiPickersDay-dayOutsideMonth': {
-                                                color: '#9CA3AF',
-                                                fontWeight: 400
-                                            },
-                                            '& .MuiPickersCalendarHeader-switchViewButton': {
-                                                display: 'none'
-                                            }
-                                        }}
-                                    />
-                                </LocalizationProvider>
-                            </CardContent>
-                        </Card>
+                                            }}
+                                        />
+                                    </LocalizationProvider>
+                                </CardContent>
+                            </Card>
 
-                        {/* Seçili Gün Yemek Kartları */}
-                        {selectedDate && (
-                            <Grid container spacing={2}>
-                                {/* Kahvaltı Kartı */}
-                                <Grid item xs={12} md={4}>
-                                    <MealCard color="#4caf50">
-                                        <CardContent sx={{ 
-                                            p: 3, 
-                                            flex: 1,
-                                            background: 'linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%)'
-                                        }}>
-                                            <Box>
-                                                <Typography variant="h6" sx={{ 
-                                                    fontSize: 20, 
-                                                    fontWeight: 700, 
-                                                    mb: 1,
-                                                    display: 'flex',
-                                                    alignItems: 'center',
-                                                    gap: 1
-                                                }}>
-                                                    <RestaurantIcon sx={{ fontSize: 18 }} />
-                                                    Kahvaltı Menüsü
-                                                </Typography>
-                                                <Typography sx={{ 
-                                                    fontSize: 14, 
-                                                    opacity: 0.95, 
-                                                    mb: 2,
-                                                    display: 'flex',
-                                                    alignItems: 'center',
-                                                    gap: 0.5
-                                                }}>
-                                                    <AccessTimeIcon sx={{ fontSize: 14 }} />
-                                                    {dummyMeals[0].meals.breakfast.time}
-                                                </Typography>
-                                                <Typography sx={{ 
-                                                    fontSize: 14, 
-                                                    opacity: 0.95, 
-                                                    whiteSpace: 'pre-line',
-                                                    lineHeight: 1.6
-                                                }}>
-                                                    {dummyMeals[0].meals.breakfast.menu}
-                                                </Typography>
-                                            </Box>
-                            </CardContent>
-                                    </MealCard>
+                            {/* Meal Cards */}
+                            <Box sx={{ flex: 1 }}>
+                                <Grid container spacing={2}>
+                                    {selectedDate && (
+                                        <>
+                                            {/* Kahvaltı Kartı */}
+                                            <Grid item xs={12} md={4}>
+                                                <MealCard color="#4caf50">
+                                                    <CardContent sx={{ 
+                                                        p: 3, 
+                                                        flex: 1,
+                                                        background: 'linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%)'
+                                                    }}>
+                                                        <Box>
+                                                            <Typography variant="h6" sx={{ 
+                                                                fontSize: 20, 
+                                                                fontWeight: 700, 
+                                                                mb: 1,
+                                                                display: 'flex',
+                                                                alignItems: 'center',
+                                                                gap: 1
+                                                            }}>
+                                                                <RestaurantIcon sx={{ fontSize: 18 }} />
+                                                                Kahvaltı Menüsü
+                                                            </Typography>
+                                                            <Typography sx={{ 
+                                                                fontSize: 14, 
+                                                                opacity: 0.95, 
+                                                                mb: 2,
+                                                                display: 'flex',
+                                                                alignItems: 'center',
+                                                                gap: 0.5
+                                                            }}>
+                                                                <AccessTimeIcon sx={{ fontSize: 14 }} />
+                                                                {dummyMeals[0].meals.breakfast.time}
+                                                            </Typography>
+                                                            <Typography sx={{ 
+                                                                fontSize: 14, 
+                                                                opacity: 0.95, 
+                                                                whiteSpace: 'pre-line',
+                                                                lineHeight: 1.6
+                                                            }}>
+                                                                {dummyMeals[0].meals.breakfast.menu}
+                                                            </Typography>
+                                                        </Box>
+                                                    </CardContent>
+                                                </MealCard>
+                                            </Grid>
+
+                                            {/* Öğle Yemeği Kartı */}
+                                            <Grid item xs={12} md={4}>
+                                                <MealCard color="#f44336">
+                                                    <CardContent sx={{ 
+                                                        p: 3, 
+                                                        flex: 1,
+                                                        background: 'linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%)'
+                                                    }}>
+                                                        <Box>
+                                                            <Typography variant="h6" sx={{ 
+                                                                fontSize: 20, 
+                                                                fontWeight: 700,
+                                                                mb: 1,
+                                                                display: 'flex',
+                                                                alignItems: 'center',
+                                                                gap: 1
+                                                            }}>
+                                                                <RestaurantIcon sx={{ fontSize: 18 }} />
+                                                                Öğle Yemeği
+                                                            </Typography>
+                                                            <Typography sx={{ 
+                                                                fontSize: 14, 
+                                                                opacity: 0.95, 
+                                                                mb: 2,
+                                                                display: 'flex',
+                                                                alignItems: 'center',
+                                                                gap: 0.5
+                                                            }}>
+                                                                <AccessTimeIcon sx={{ fontSize: 14 }} />
+                                                                {dummyMeals[0].meals.lunch.time}
+                                                            </Typography>
+                                                            <Typography sx={{ 
+                                                                fontSize: 14, 
+                                                                opacity: 0.95, 
+                                                                whiteSpace: 'pre-line',
+                                                                lineHeight: 1.6
+                                                            }}>
+                                                                {dummyMeals[0].meals.lunch.menu}
+                                                            </Typography>
+                                                        </Box>
+                                                    </CardContent>
+                                                </MealCard>
+                                            </Grid>
+
+                                            {/* Akşam Yemeği Kartı */}
+                                            <Grid item xs={12} md={4}>
+                                                <MealCard color="#2196f3">
+                                                    <CardContent sx={{ 
+                                                        p: 3, 
+                                                        flex: 1,
+                                                        background: 'linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%)'
+                                                    }}>
+                                                        <Box>
+                                                            <Typography variant="h6" sx={{ 
+                                                                fontSize: 20, 
+                                                                fontWeight: 700,
+                                                                mb: 1,
+                                                                display: 'flex',
+                                                                alignItems: 'center',
+                                                                gap: 1
+                                                            }}>
+                                                                <RestaurantIcon sx={{ fontSize: 18 }} />
+                                                                Akşam Yemeği
+                                                            </Typography>
+                                                            <Typography sx={{ 
+                                                                fontSize: 14, 
+                                                                opacity: 0.95, 
+                                                                mb: 2,
+                                                                display: 'flex',
+                                                                alignItems: 'center',
+                                                                gap: 0.5
+                                                            }}>
+                                                                <AccessTimeIcon sx={{ fontSize: 14 }} />
+                                                                {dummyMeals[0].meals.dinner.time}
+                                                            </Typography>
+                                                            <Typography sx={{ 
+                                                                fontSize: 14, 
+                                                                opacity: 0.95, 
+                                                                whiteSpace: 'pre-line',
+                                                                lineHeight: 1.6
+                                                            }}>
+                                                                {dummyMeals[0].meals.dinner.menu}
+                                                            </Typography>
+                                                        </Box>
+                                                    </CardContent>
+                                                </MealCard>
+                                            </Grid>
+                                        </>
+                                    )}
                                 </Grid>
-
-                                {/* Öğle Yemeği Kartı */}
-                                <Grid item xs={12} md={4}>
-                                    <MealCard color="#f44336">
-                                        <CardContent sx={{ 
-                                            p: 3, 
-                                            flex: 1,
-                                            background: 'linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%)'
-                                        }}>
-                                            <Box>
-                                <Typography variant="h6" sx={{ 
-                                                    fontSize: 20, 
-                                    fontWeight: 700,
-                                                    mb: 1,
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: 1
-                                }}>
-                                                    <RestaurantIcon sx={{ fontSize: 18 }} />
-                                                    Öğle Yemeği
-                                </Typography>
-                                                <Typography sx={{ 
-                                                    fontSize: 14, 
-                                                    opacity: 0.95, 
-                                                    mb: 2,
-                                                    display: 'flex',
-                                                    alignItems: 'center',
-                                                    gap: 0.5
-                                                }}>
-                                                    <AccessTimeIcon sx={{ fontSize: 14 }} />
-                                                    {dummyMeals[0].meals.lunch.time}
-                                                </Typography>
-                                                <Typography sx={{ 
-                                                    fontSize: 14, 
-                                                    opacity: 0.95, 
-                                                    whiteSpace: 'pre-line',
-                                                    lineHeight: 1.6
-                                                }}>
-                                                    {dummyMeals[0].meals.lunch.menu}
-                                                    </Typography>
-                                                </Box>
-                            </CardContent>
-                                    </MealCard>
-                    </Grid>
-
-                                {/* Akşam Yemeği Kartı */}
-                                <Grid item xs={12} md={4}>
-                                    <MealCard color="#2196f3">
-                                        <CardContent sx={{ 
-                                            p: 3, 
-                                            flex: 1,
-                                            background: 'linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%)'
-                                        }}>
-                                            <Box>
-                                <Typography variant="h6" sx={{ 
-                                                    fontSize: 20, 
-                                    fontWeight: 700,
-                                                    mb: 1,
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: 1
-                                }}>
-                                                    <RestaurantIcon sx={{ fontSize: 18 }} />
-                                                    Akşam Yemeği
-                                </Typography>
-                                                <Typography sx={{ 
-                                                    fontSize: 14, 
-                                                    opacity: 0.95, 
-                                                    mb: 2,
-                                                    display: 'flex',
-                                                    alignItems: 'center',
-                                                    gap: 0.5
-                                                }}>
-                                                    <AccessTimeIcon sx={{ fontSize: 14 }} />
-                                                    {dummyMeals[0].meals.dinner.time}
-                                                </Typography>
-                                                <Typography sx={{ 
-                                                    fontSize: 14, 
-                                                    opacity: 0.95, 
-                                                    whiteSpace: 'pre-line',
-                                                    lineHeight: 1.6
-                                                }}>
-                                                    {dummyMeals[0].meals.dinner.menu}
-                                                </Typography>
-                                            </Box>
-                                            </CardContent>
-                                    </MealCard>
-                                </Grid>
-                            </Grid>
-                        )}
+                            </Box>
+                        </Box>
                     </Grid>
                 </Grid>
 
@@ -1827,7 +1764,8 @@ const Dashboard: React.FC = () => {
                     <Card sx={{ 
                         borderRadius: 2,
                         boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
-                        p: 3
+                        p: 3,
+                        background: 'linear-gradient(to right bottom, #ffffff, #fafafa)'
                     }}>
                         <Box sx={{ 
                             display: 'flex', 
@@ -1835,20 +1773,35 @@ const Dashboard: React.FC = () => {
                             alignItems: 'center', 
                             mb: 3 
                         }}>
-                            <Typography variant="h6" sx={{ 
-                                fontWeight: 700,
-                                color: '#1a237e',
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: 1
-                            }}>
-                                <NotificationsIcon />
-                                Yaklaşan Etkinlikler
-                            </Typography>
+                            <Box>
+                                <Typography variant="h6" sx={{ 
+                                    fontWeight: 700,
+                                    color: '#1a237e',
+                                    fontSize: '1.1rem',
+                                    mb: 0.5
+                                }}>
+                                    Yaklaşan Etkinlikler
+                                </Typography>
+                                <Typography variant="body2" color="text.secondary">
+                                    Bu hafta planlanan etkinlikler
+                                </Typography>
+                            </Box>
                             <Button 
                                 variant="outlined" 
-                                color="primary"
-                                endIcon={<ArrowForwardIcon />}
+                                size="small"
+                                sx={{
+                                    borderRadius: '8px',
+                                    textTransform: 'none',
+                                    px: 2,
+                                    borderColor: '#e0e0e0',
+                                    color: '#666',
+                                    '&:hover': {
+                                        borderColor: '#1a237e',
+                                        color: '#1a237e',
+                                        backgroundColor: 'rgba(26, 35, 126, 0.04)'
+                                    }
+                                }}
+                                endIcon={<ArrowForwardIcon sx={{ fontSize: 18 }} />}
                                 onClick={() => navigate('/events')}
                             >
                                 Tümünü Gör
@@ -1861,79 +1814,76 @@ const Dashboard: React.FC = () => {
                                 <EventListItem key={index} color={item.category.color}>
                                     <Grid container alignItems="center" spacing={2}>
                                         <Grid item>
-                                            <Avatar sx={{ 
-                                                bgcolor: `${item.category.color}15`,
+                                            <Box sx={{
+                                                width: 40,
+                                                height: 40,
+                                                borderRadius: '8px',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                bgcolor: `${item.category.color}10`,
                                                 color: item.category.color,
-                                                width: 48,
-                                                height: 48
+                                                fontSize: '1.2rem'
                                             }}>
                                                 {item.category.icon}
-                                            </Avatar>
+                                            </Box>
                                         </Grid>
                                         <Grid item xs>
                                             <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
                                                 <Box>
-                                                    <Typography variant="subtitle1" sx={{ 
-                                                        fontWeight: 600,
-                                                        color: '#1a237e',
-                                                        mb: 0.5
-                                                    }}>
-                                                        {item.title}
-                                                    </Typography>
+                                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
+                                                        <Typography variant="subtitle1" sx={{ 
+                                                            fontWeight: 600,
+                                                            color: '#2f3542',
+                                                            fontSize: '0.9rem'
+                                                        }}>
+                                                            {item.title}
+                                                        </Typography>
+                                                        <Chip
+                                                            label={item.category.name}
+                                                            size="small"
+                                                            sx={{
+                                                                height: '20px',
+                                                                fontSize: '0.7rem',
+                                                                bgcolor: `${item.category.color}10`,
+                                                                color: item.category.color,
+                                                                fontWeight: 600
+                                                            }}
+                                                        />
+                                                    </Box>
                                                     <Typography variant="body2" sx={{ 
                                                         color: '#666',
+                                                        fontSize: '0.8rem',
                                                         display: 'flex',
                                                         alignItems: 'center',
-                                                        gap: 1
+                                                        gap: 0.5
                                                     }}>
-                                                        <AccessTimeIcon sx={{ fontSize: 16 }} />
+                                                        <AccessTimeIcon sx={{ fontSize: 14 }} />
                                                         {item.date}
                                                     </Typography>
                                                 </Box>
-                                                <AvatarGroup>
-                                                    {[...Array(3)].map((_, i) => (
-                                                        <Avatar
-                                                            key={i}
-                                                            src={`https://i.pravatar.cc/150?img=${index * 3 + i + 1}`}
-                                                            sx={{ 
-                                                                width: 32, 
-                                                                height: 32,
-                                                                border: '2px solid #fff'
-                                                            }}
-                                                        />
-                                                    ))}
-                                                </AvatarGroup>
-                                            </Box>
-                                            <Typography variant="body2" sx={{ 
-                                                mt: 1,
-                                                color: '#666'
-                                            }}>
-                                                {item.description}
-                                            </Typography>
-                                            <Box sx={{ 
-                                                display: 'flex', 
-                                                alignItems: 'center', 
-                                                gap: 1,
-                                                mt: 2
-                                            }}>
-                                                <Chip
-                                                    label={item.category.name}
-                                                    size="small"
-                                                    sx={{
-                                                        bgcolor: `${item.category.color}15`,
-                                                        color: item.category.color,
-                                                        fontWeight: 600
-                                                    }}
-                                                />
                                                 <Typography variant="caption" sx={{ 
+                                                    color: '#666',
+                                                    fontSize: '0.75rem',
                                                     display: 'flex',
                                                     alignItems: 'center',
-                                                    gap: 0.5,
-                                                    color: '#666'
+                                                    gap: 0.5
                                                 }}>
                                                     {item.stats.label}: <strong>{item.stats.value}</strong>
                                                 </Typography>
                                             </Box>
+                                            <Typography variant="body2" sx={{ 
+                                                mt: 1,
+                                                color: '#666',
+                                                fontSize: '0.85rem',
+                                                display: '-webkit-box',
+                                                WebkitLineClamp: 2,
+                                                WebkitBoxOrient: 'vertical',
+                                                overflow: 'hidden',
+                                                lineHeight: 1.5
+                                            }}>
+                                                {item.description}
+                                            </Typography>
                                         </Grid>
                                     </Grid>
                                 </EventListItem>

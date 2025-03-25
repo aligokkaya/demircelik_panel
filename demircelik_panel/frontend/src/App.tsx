@@ -4,6 +4,7 @@ import { CssBaseline, ThemeProvider, createTheme } from '@mui/material';
 import Dashboard from './components/dashboard/Dashboard';
 import Home from './pages/Home';
 import WeatherAndMeals from './pages/WeatherAndMeals';
+import Events from './pages/Events';
 
 const theme = createTheme({
   palette: {
@@ -78,6 +79,7 @@ const App = () => {
               <WeatherAndMeals />
             </PrivateRoute>
           } />
+          <Route path="/events" element={<Events />} />
         </Routes>
       </Router>
     </ThemeProvider>

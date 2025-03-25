@@ -273,69 +273,236 @@ const SectionBanner = styled(Box)<SectionBannerProps>(({ theme, color = '#ff0000
     }
 }));
 
-const renderSectionBanner = (category: string) => {
-    let title = '';
-    let subtitle = '';
-    let color = '';
-    let icon = null;
-    let image = '';
+const WeatherTabs = styled(Box)(({ theme }) => ({
+    display: 'flex',
+    gap: '4px',
+    marginBottom: '20px',
+    overflowX: 'auto',
+    '&::-webkit-scrollbar': {
+        display: 'none'
+    },
+    '-ms-overflow-style': 'none',
+    'scrollbar-width': 'none'
+}));
 
-    switch (category) {
-        case 'isg':
-            title = 'İSG HABERLERİ';
-            subtitle = 'İş Sağlığı ve Güvenliği Güncel Bildirimleri';
-            color = '#d32f2f';
-            icon = <HealthAndSafety sx={{ fontSize: 40 }} />;
-            image = '/images/isg-background.jpg';
-            break;
-        case 'environment':
-            title = 'ÇEVRE BÜLTENİ';
-            subtitle = 'Çevre ve Sürdürülebilirlik Haberleri';
-            color = '#2e7d32';
-            icon = <Eco sx={{ fontSize: 40 }} />;
-            image = '/images/environment-background.jpg';
-            break;
-        case 'quality':
-            title = 'KALİTE KÖŞESİ';
-            subtitle = 'Kalite Yönetim Sistemi Güncellemeleri';
-            color = '#1565c0';
-            icon = <Assignment sx={{ fontSize: 40 }} />;
-            image = '/images/quality-background.jpg';
-            break;
-        default:
-            title = 'GENEL DUYURULAR';
-            subtitle = 'Şirket Geneli Önemli Bilgilendirmeler';
-            color = '#435785';
-            icon = <NotificationsIcon sx={{ fontSize: 40 }} />;
-            image = '/images/general-background.jpg';
+const WeatherTab = styled(Button)(({ active }: { active?: boolean }) => ({
+    backgroundColor: active ? '#FFD700' : 'rgba(255, 255, 255, 0.1)',
+    color: active ? '#000' : '#fff',
+    padding: '8px 16px',
+    borderRadius: '20px',
+    minWidth: 'auto',
+    fontSize: '0.875rem',
+    fontWeight: 500,
+    '&:hover': {
+        backgroundColor: active ? '#FFD700' : 'rgba(255, 255, 255, 0.2)',
     }
+}));
 
-    return (
-        <SectionBanner color={color} backgroundImage={image}>
-            <Box className="content" sx={{ width: '100%' }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 1 }}>
-                    {icon}
-                    <Box>
-                        <Typography variant="h5" sx={{ 
-                            fontWeight: 800,
-                            textShadow: '0 2px 4px rgba(0,0,0,0.2)',
-                            letterSpacing: '0.5px'
-                        }}>
-                            {title}
-                        </Typography>
-                        <Typography variant="subtitle1" sx={{ 
-                            opacity: 0.9,
-                            textShadow: '0 2px 4px rgba(0,0,0,0.2)',
-                            fontWeight: 500
-                        }}>
-                            {subtitle}
-                        </Typography>
-                    </Box>
-                </Box>
-            </Box>
-        </SectionBanner>
-    );
-};
+const WeatherCard = styled(Box)(({ theme }) => ({
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    borderRadius: '12px',
+    padding: '12px',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    gap: '8px',
+    cursor: 'pointer',
+    transition: 'all 0.3s ease',
+    minWidth: '100px',
+    '&:hover': {
+        backgroundColor: 'rgba(255, 255, 255, 0.15)',
+        transform: 'translateY(-2px)'
+    }
+}));
+
+const WeatherInfoBox = styled(Box)(({ theme }) => ({
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    borderRadius: '12px',
+    padding: '16px',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '12px',
+    width: '100%',
+    marginBottom: '8px'
+}));
+
+const TemperatureGraph = styled(Box)(({ theme }) => ({
+    position: 'relative',
+    height: '200px',
+    width: '100%',
+    marginTop: '20px',
+    '& .graph-line': {
+        position: 'absolute',
+        left: 0,
+        right: 0,
+        height: '1px',
+        backgroundColor: 'rgba(255,255,255,0.1)'
+    },
+    '& .temperature-point': {
+        position: 'absolute',
+        width: '8px',
+        height: '8px',
+        backgroundColor: '#FFD700',
+        borderRadius: '50%',
+        transform: 'translate(-50%, 50%)',
+        cursor: 'pointer',
+        '&::after': {
+            content: '""',
+            position: 'absolute',
+            top: '-4px',
+            left: '-4px',
+            right: '-4px',
+            bottom: '-4px',
+            border: '2px solid rgba(255,215,0,0.3)',
+            borderRadius: '50%',
+            transition: 'all 0.3s ease'
+        },
+        '&:hover::after': {
+            top: '-6px',
+            left: '-6px',
+            right: '-6px',
+            bottom: '-6px',
+            borderColor: 'rgba(255,215,0,0.5)'
+        }
+    }
+}));
+
+const WeatherContent = styled(Box)(({ theme }) => ({
+    position: 'relative',
+    minHeight: '400px',
+    width: '100%',
+    zIndex: 2
+}));
+
+const RainChart = styled(Box)(({ theme }) => ({
+    position: 'relative',
+    height: '200px',
+    width: '100%',
+    marginTop: '20px',
+    '& .rain-bar': {
+        position: 'absolute',
+        bottom: 0,
+        width: '30px',
+        borderRadius: '4px 4px 0 0',
+        background: 'linear-gradient(180deg, rgba(144,202,249,0.2) 0%, rgba(144,202,249,0.8) 100%)',
+        transition: 'all 0.3s ease'
+    }
+}));
+
+const HumidityGauge = styled(Box)(({ theme }) => ({
+    position: 'relative',
+    width: '200px',
+    height: '200px',
+    margin: '20px auto',
+    borderRadius: '50%',
+    background: 'conic-gradient(from 0deg, rgba(144,202,249,0.8) var(--value), rgba(255,255,255,0.1) var(--value))',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    '&::before': {
+        content: '""',
+        position: 'absolute',
+        width: '80%',
+        height: '80%',
+        borderRadius: '50%',
+        background: 'rgba(0,0,0,0.1)',
+        backdropFilter: 'blur(5px)'
+    }
+}));
+
+const DailyTempGraph = styled(Box)(({ theme }) => ({
+    position: 'relative',
+    width: '100%',
+    height: '120px',
+    marginTop: '20px',
+    marginBottom: '20px',
+    '& .temp-line': {
+        position: 'absolute',
+        left: 0,
+        right: 0,
+        height: '1px',
+        backgroundColor: 'rgba(255,255,255,0.1)'
+    },
+    '& .temp-point': {
+        position: 'absolute',
+        width: '6px',
+        height: '6px',
+        backgroundColor: '#FFD700',
+        borderRadius: '50%',
+        transform: 'translate(-50%, -50%)',
+        cursor: 'pointer',
+        transition: 'all 0.3s ease',
+        '&::after': {
+            content: '""',
+            position: 'absolute',
+            top: '-4px',
+            left: '-4px',
+            right: '-4px',
+            bottom: '-4px',
+            border: '1px solid rgba(255,215,0,0.3)',
+            borderRadius: '50%',
+            transition: 'all 0.3s ease'
+        },
+        '&:hover': {
+            width: '8px',
+            height: '8px',
+            backgroundColor: '#FFF',
+            boxShadow: '0 0 10px rgba(255,215,0,0.5)',
+            '&::after': {
+                top: '-6px',
+                left: '-6px',
+                right: '-6px',
+                bottom: '-6px',
+                borderColor: 'rgba(255,215,0,0.5)'
+            }
+        }
+    },
+    '& .temp-line-connect': {
+        position: 'absolute',
+        height: '2px',
+        background: 'linear-gradient(90deg, #FFD700 0%, #FFA500 100%)',
+        opacity: 0.5,
+        transition: 'all 0.3s ease'
+    }
+}));
+
+const EventListItem = styled(Box)(({ color = '#1a76d2' }: { color?: string }) => ({
+    position: 'relative',
+    padding: '20px',
+    marginBottom: '16px',
+    backgroundColor: '#fff',
+    borderRadius: '12px',
+    boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
+    transition: 'all 0.3s ease',
+    '&::before': {
+        content: '""',
+        position: 'absolute',
+        left: 0,
+        top: 0,
+        bottom: 0,
+        width: '4px',
+        backgroundColor: color,
+        borderRadius: '4px 0 0 4px'
+    },
+    '&:hover': {
+        transform: 'translateX(4px)',
+        boxShadow: '0 4px 8px rgba(0,0,0,0.1)'
+    }
+}));
+
+const AvatarGroup = styled(Box)({
+    display: 'flex',
+    alignItems: 'center',
+    '& .MuiAvatar-root': {
+        width: 32,
+        height: 32,
+        border: '2px solid #fff',
+        marginLeft: -8,
+        '&:first-of-type': {
+            marginLeft: 0
+        }
+    }
+});
 
 const Dashboard: React.FC = () => {
     const [posts, setPosts] = useState<{[key: string]: Post[]}>({
@@ -349,6 +516,7 @@ const Dashboard: React.FC = () => {
     const [password, setPassword] = useState('');
     const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
     const [currentWeather, setCurrentWeather] = useState<WeatherType>('sunny');
+    const [activeTab, setActiveTab] = useState('hourly');
     const navigate = useNavigate();
 
     // Hava durumu tipleri ve arka plan stilleri
@@ -400,23 +568,38 @@ const Dashboard: React.FC = () => {
 
     // Hava durumu verileri
     const weatherData = useMemo(() => ({
+        current: {
+            temp: currentWeather === 'sunny' ? 21 : 
+                  currentWeather === 'cloudy' ? 18 :
+                  currentWeather === 'rainy' ? 16 :
+                  currentWeather === 'snowy' ? 0 : 15,
+            feels_like: currentWeather === 'sunny' ? 24 : 
+                         currentWeather === 'cloudy' ? 19 :
+                         currentWeather === 'rainy' ? 15 :
+                         currentWeather === 'snowy' ? -2 : 14,
+            wind_speed: 12,
+            humidity: 31,
+            visibility: 10,
+            pressure: 1023
+        },
         hourly: [...Array(8)].map((_, index) => ({
-            time: `${12 + index}:00`,
-            temp: currentWeather === 'sunny' ? 25 + index : 
-                  currentWeather === 'cloudy' ? 20 + index :
-                  currentWeather === 'rainy' ? 18 + index :
-                  currentWeather === 'snowy' ? 0 + index : 15 + index,
+            time: `${index + 12}:00`,
+            temp: currentWeather === 'sunny' ? Math.round(21 + Math.sin(index/2) * 3) : 
+                  currentWeather === 'cloudy' ? Math.round(18 + Math.sin(index/2) * 2) :
+                  currentWeather === 'rainy' ? Math.round(16 + Math.sin(index/2) * 2) :
+                  currentWeather === 'snowy' ? Math.round(0 + Math.sin(index/2) * 2) : 
+                  Math.round(15 + Math.sin(index/2) * 2),
             type: currentWeather as WeatherType
         })),
         daily: [...Array(7)].map((_, index) => {
-            const baseTemp = currentWeather === 'sunny' ? 28 :
-                           currentWeather === 'cloudy' ? 22 :
-                           currentWeather === 'rainy' ? 20 :
-                           currentWeather === 'snowy' ? 0 : 25;
+            const baseTemp = currentWeather === 'sunny' ? 21 :
+                           currentWeather === 'cloudy' ? 18 :
+                           currentWeather === 'rainy' ? 16 :
+                           currentWeather === 'snowy' ? 0 : 15;
             return {
                 day: ['Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi', 'Pazar'][index],
-                high: baseTemp + Math.floor(Math.random() * 5),
-                low: baseTemp - Math.floor(Math.random() * 5),
+                high: baseTemp + Math.floor(Math.random() * 3),
+                low: baseTemp - Math.floor(Math.random() * 3),
                 type: currentWeather as WeatherType
             };
         })
@@ -553,15 +736,15 @@ const Dashboard: React.FC = () => {
             date: new Date(),
             meals: {
                 breakfast: {
-                    menu: "• Zengin Açık Büfe Kahvaltı\n• Simit ve Poğaça Çeşitleri\n• Taze Demlenmiş Çay\n• Filtre Kahve\n• Meyve Suyu Çeşitleri",
+            menu: "• Zengin Açık Büfe Kahvaltı\n• Simit ve Poğaça Çeşitleri\n• Taze Demlenmiş Çay\n• Filtre Kahve\n• Meyve Suyu Çeşitleri",
                     time: "07:00 - 09:00"
-                },
+        },
                 lunch: {
-                    menu: "• Mercimek Çorbası\n• Izgara Köfte\n• Pirinç Pilavı\n• Mevsim Salata\n• Cacık\n• Baklava\n• Meyve Suyu",
+            menu: "• Mercimek Çorbası\n• Izgara Köfte\n• Pirinç Pilavı\n• Mevsim Salata\n• Cacık\n• Baklava\n• Meyve Suyu",
                     time: "12:00 - 14:00"
-                },
+        },
                 dinner: {
-                    menu: "• Ezogelin Çorbası\n• Fırın Tavuk\n• Sebzeli Bulgur Pilavı\n• Karışık Salata\n• Yoğurt\n• Sütlaç\n• Ayran",
+            menu: "• Ezogelin Çorbası\n• Fırın Tavuk\n• Sebzeli Bulgur Pilavı\n• Karışık Salata\n• Yoğurt\n• Sütlaç\n• Ayran",
                     time: "18:00 - 20:00"
                 }
             }
@@ -660,6 +843,290 @@ const Dashboard: React.FC = () => {
             localStorage.setItem('isLoggedIn', 'true');
             navigate('/home');
         }
+    };
+
+    const renderWeatherContent = () => {
+        switch (activeTab) {
+            case 'hourly':
+                return (
+                    <WeatherContent>
+                        <Box sx={{ mb: 4 }}>
+                            <Typography variant="h6" sx={{ mb: 2, fontWeight: 600 }}>
+                                Günlük Sıcaklık Değişimi
+                            </Typography>
+                            <DailyTempGraph>
+                                {/* Yatay çizgiler */}
+                                {[...Array(5)].map((_, i) => (
+                                    <Box
+                                        key={i}
+                                        className="temp-line"
+                                        sx={{ top: `${i * 25}%` }}
+                                    />
+                                ))}
+                                
+                                {/* Sıcaklık noktaları ve bağlantı çizgileri */}
+                                {weatherData.hourly.map((hour, index, array) => (
+                                    <React.Fragment key={index}>
+                                        {/* Bağlantı çizgisi */}
+                                        {index < array.length - 1 && (
+                                            <Box
+                                                className="temp-line-connect"
+                                                sx={{
+                                                    left: `${(index / (array.length - 1)) * 100}%`,
+                                                    width: `${100 / (array.length - 1)}%`,
+                                                    top: `${100 - ((hour.temp - 15) / 20) * 100}%`,
+                                                    transform: `rotate(${Math.atan2(
+                                                        ((array[index + 1].temp - 15) / 20) * 100 - ((hour.temp - 15) / 20) * 100,
+                                                        100 / (array.length - 1)
+                                                    )}rad)`,
+                                                    transformOrigin: '0 50%'
+                                                }}
+                                            />
+                                        )}
+                                        {/* Sıcaklık noktası */}
+                                        <Box
+                                            className="temp-point"
+                                            sx={{
+                                                left: `${(index / (array.length - 1)) * 100}%`,
+                                                top: `${100 - ((hour.temp - 15) / 20) * 100}%`
+                                            }}
+                                        />
+                                    </React.Fragment>
+                                ))}
+                            </DailyTempGraph>
+                            
+                            {/* Saat ve sıcaklık etiketleri */}
+                            <Box sx={{ 
+                                display: 'flex', 
+                                justifyContent: 'space-between',
+                                mt: 1,
+                                px: 1
+                            }}>
+                                {weatherData.hourly.map((hour, index) => (
+                                    <Box key={index} sx={{ textAlign: 'center' }}>
+                                        <Typography variant="caption" sx={{ 
+                                            opacity: 0.7, 
+                                            display: 'block',
+                                            fontSize: '0.75rem'
+                                        }}>
+                                            {hour.time}
+                                        </Typography>
+                                        <Typography variant="body2" sx={{ 
+                                            fontWeight: 600,
+                                            fontSize: '0.875rem'
+                                        }}>
+                                            {hour.temp}°
+                                        </Typography>
+                                    </Box>
+                                ))}
+                            </Box>
+                        </Box>
+                        <TemperatureGraph>
+                            {[...Array(6)].map((_, i) => (
+                                <Box key={i} className="graph-line" sx={{ top: `${i * 20}%` }} />
+                            ))}
+                            <Box sx={{
+                                position: 'absolute',
+                                left: 0,
+                                top: '50%',
+                                transform: 'translateY(-50%)',
+                                width: '100%',
+                                height: '60%',
+                                background: 'linear-gradient(180deg, rgba(255,215,0,0.2) 0%, rgba(255,140,0,0.1) 100%)',
+                                borderRadius: '12px'
+                            }} />
+                            {weatherData.hourly.map((hour, index) => (
+                                <Box
+                                    key={index}
+                                    className="temperature-point"
+                                    sx={{
+                                        left: `${(index / (weatherData.hourly.length - 1)) * 100}%`,
+                                        bottom: `${((hour.temp - 5) / 40) * 100}%`
+                                    }}
+                                />
+                            ))}
+                        </TemperatureGraph>
+                        <Box sx={{ 
+                            display: 'flex', 
+                            justifyContent: 'space-between',
+                            mt: 2,
+                            pt: 2,
+                            borderTop: '1px solid rgba(255,255,255,0.1)'
+                        }}>
+                            {weatherData.hourly.map((hour, index) => (
+                                <Box key={index} sx={{ textAlign: 'center' }}>
+                                    <Typography variant="caption" sx={{ opacity: 0.7, display: 'block' }}>
+                                        {hour.time}
+                                    </Typography>
+                                    <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                                        {hour.temp}°
+                                    </Typography>
+                                </Box>
+                            ))}
+                        </Box>
+                    </WeatherContent>
+                );
+            case 'overview':
+                return (
+                    <WeatherContent>
+                        <Grid container spacing={2}>
+                            <Grid item xs={12}>
+                                <Box sx={{ 
+                                    p: 3, 
+                                    bgcolor: 'rgba(255,255,255,0.1)',
+                                    borderRadius: 2,
+                                    backdropFilter: 'blur(10px)'
+                                }}>
+                                    <Typography variant="h3" sx={{ fontWeight: 700, mb: 1 }}>
+                                        {weatherData.hourly[0].temp}°C
+                                    </Typography>
+                                    <Typography variant="h6" sx={{ opacity: 0.8 }}>
+                                        {weatherTypes[currentWeather].text}
+                                    </Typography>
+                                </Box>
+                            </Grid>
+                            {['Nem', 'Rüzgar', 'UV İndeksi', 'Görüş'].map((item, index) => (
+                                <Grid item xs={6} key={index}>
+                                    <Box sx={{ 
+                                        p: 2, 
+                                        bgcolor: 'rgba(255,255,255,0.1)',
+                                        borderRadius: 2,
+                                        textAlign: 'center'
+                                    }}>
+                                        <Typography variant="body2" sx={{ opacity: 0.7, mb: 1 }}>
+                                            {item}
+                                        </Typography>
+                                        <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                                            {index === 0 ? '65%' : 
+                                             index === 1 ? '12 km/s' :
+                                             index === 2 ? '5' : '10 km'}
+                                        </Typography>
+                                    </Box>
+                                </Grid>
+                            ))}
+                        </Grid>
+                    </WeatherContent>
+                );
+            case 'rain':
+                return (
+                    <WeatherContent>
+                        <Typography variant="h6" sx={{ mb: 3 }}>Yağış Tahmini</Typography>
+                        <RainChart>
+                            {weatherData.hourly.map((hour, index) => (
+                                <Box
+                                    key={index}
+                                    className="rain-bar"
+                                    sx={{
+                                        left: `${(index / weatherData.hourly.length) * 100}%`,
+                                        height: `${Math.random() * 100}%`,
+                                        transform: 'translateX(-50%)'
+                                    }}
+                                />
+                            ))}
+                        </RainChart>
+                        <Box sx={{ 
+                            display: 'flex', 
+                            justifyContent: 'space-between',
+                            mt: 2
+                        }}>
+                            {weatherData.hourly.map((hour, index) => (
+                                <Typography key={index} variant="caption" sx={{ opacity: 0.7 }}>
+                                    {hour.time}
+                                </Typography>
+                            ))}
+                        </Box>
+                    </WeatherContent>
+                );
+            case 'humidity':
+                return (
+                    <WeatherContent>
+                        <Typography variant="h6" sx={{ mb: 3 }}>Nem Oranı</Typography>
+                        <HumidityGauge sx={{ '--value': '65%' }}>
+                            <Typography variant="h4" sx={{ 
+                                position: 'relative',
+                                zIndex: 1,
+                                fontWeight: 700 
+                            }}>
+                                65%
+                            </Typography>
+                        </HumidityGauge>
+                        <Box sx={{ textAlign: 'center', mt: 3 }}>
+                            <Typography variant="body1" sx={{ opacity: 0.8 }}>
+                                Normal Nem Seviyesi
+                            </Typography>
+                            <Typography variant="body2" sx={{ opacity: 0.6, mt: 1 }}>
+                                İdeal aralık: 40-60%
+                            </Typography>
+                        </Box>
+                    </WeatherContent>
+                );
+            default:
+                return null;
+        }
+    };
+
+    const renderSectionBanner = (category: string) => {
+        let title = '';
+        let subtitle = '';
+        let color = '';
+        let icon = null;
+        let image = '';
+
+        switch (category) {
+            case 'isg':
+                title = 'İSG HABERLERİ';
+                subtitle = 'İş Sağlığı ve Güvenliği Güncel Bildirimleri';
+                color = '#d32f2f';
+                icon = <HealthAndSafety sx={{ fontSize: 40 }} />;
+                image = '/images/isg-background.jpg';
+                break;
+            case 'environment':
+                title = 'ÇEVRE BÜLTENİ';
+                subtitle = 'Çevre ve Sürdürülebilirlik Haberleri';
+                color = '#2e7d32';
+                icon = <Eco sx={{ fontSize: 40 }} />;
+                image = '/images/environment-background.jpg';
+                break;
+            case 'quality':
+                title = 'KALİTE KÖŞESİ';
+                subtitle = 'Kalite Yönetim Sistemi Güncellemeleri';
+                color = '#1565c0';
+                icon = <Assignment sx={{ fontSize: 40 }} />;
+                image = '/images/quality-background.jpg';
+                break;
+            default:
+                title = 'GENEL DUYURULAR';
+                subtitle = 'Şirket Geneli Önemli Bilgilendirmeler';
+                color = '#435785';
+                icon = <NotificationsIcon sx={{ fontSize: 40 }} />;
+                image = '/images/general-background.jpg';
+        }
+
+        return (
+            <SectionBanner color={color} backgroundImage={image}>
+                <Box className="content" sx={{ width: '100%' }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 1 }}>
+                        {icon}
+                        <Box>
+                            <Typography variant="h5" sx={{ 
+                                fontWeight: 800,
+                                textShadow: '0 2px 4px rgba(0,0,0,0.2)',
+                                letterSpacing: '0.5px'
+                            }}>
+                                {title}
+                            </Typography>
+                            <Typography variant="subtitle1" sx={{ 
+                                opacity: 0.9,
+                                textShadow: '0 2px 4px rgba(0,0,0,0.2)',
+                                fontWeight: 500
+                            }}>
+                                {subtitle}
+                            </Typography>
+                        </Box>
+                    </Box>
+                </Box>
+            </SectionBanner>
+        );
     };
 
     return (
@@ -816,14 +1283,14 @@ const Dashboard: React.FC = () => {
                                                 }
                                             }}
                                         />
-                                        <Typography variant="caption" sx={{ 
-                                            color: '#fff',
+                                    <Typography variant="caption" sx={{ 
+                                        color: '#fff',
                                             opacity: 0.9,
                                             fontSize: '0.875rem',
                                             fontWeight: 500
-                                        }}>
-                                            {item.date}
-                                        </Typography>
+                                    }}>
+                                        {item.date}
+                                    </Typography>
                                     </Box>
                                     <Typography variant="h3" sx={{ 
                                         fontWeight: 800,
@@ -884,13 +1351,12 @@ const Dashboard: React.FC = () => {
                     {/* Hava Durumu Bölümü */}
                     <Grid item xs={12} md={6}>
                         <Card sx={{ 
-                            mb: 3,
                             borderRadius: 2,
-                            boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
                             overflow: 'hidden',
                             background: weatherTypes[currentWeather].gradient,
                             color: 'white',
-                            position: 'relative'
+                            position: 'relative',
+                            p: 3
                         }}>
                             <Box sx={{
                                 position: 'absolute',
@@ -902,126 +1368,167 @@ const Dashboard: React.FC = () => {
                                 zIndex: 1
                             }} />
                             <CardContent sx={{ position: 'relative', zIndex: 2 }}>
-                                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-                                    <Typography variant="h6" sx={{ 
-                                        fontWeight: 600,
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        gap: 1
-                                    }}>
-                                        {weatherTypes[currentWeather].icon}
-                                        24 Saatlik Tahmin
-                                    </Typography>
-                                    <Typography variant="subtitle1" sx={{ opacity: 0.9 }}>
-                                        İskenderun
-                                    </Typography>
-                                </Box>
+                                {/* Ana Hava Durumu Bilgisi */}
                                 <Box sx={{ 
                                     display: 'flex', 
-                                    gap: 1, 
+                                    alignItems: 'flex-start',
+                                    justifyContent: 'space-between',
+                                    mb: 4
+                                }}>
+                                    <Box>
+                                        <Typography variant="h1" sx={{ 
+                                            fontSize: '4rem',
+                                            fontWeight: 700,
+                                            lineHeight: 1,
+                                            mb: 1
+                                        }}>
+                                            {weatherData.current.temp}°
+                                        </Typography>
+                                        <Typography variant="body1" sx={{ opacity: 0.9 }}>
+                                            Hissedilen {weatherData.current.feels_like}°
+                                        </Typography>
+                                        <Typography variant="h6" sx={{ 
+                                            mt: 2,
+                                            fontWeight: 600
+                                        }}>
+                                            {weatherTypes[currentWeather].text}
+                                        </Typography>
+                                    </Box>
+                                    <Box sx={{ 
+                                        p: 2,
+                                        backgroundColor: 'rgba(255,255,255,0.1)',
+                                        borderRadius: '50%',
+                                        width: '80px',
+                                        height: '80px',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center'
+                                    }}>
+                                        {React.cloneElement(weatherTypes[currentWeather].icon as React.ReactElement, { 
+                                            sx: { fontSize: 40 } 
+                                        })}
+                                    </Box>
+                                </Box>
+
+                                {/* Detaylı Bilgiler */}
+                                <Box sx={{ mb: 4 }}>
+                                    <Typography variant="h6" sx={{ mb: 2, fontWeight: 600 }}>
+                                        Günlük Sıcaklık Değişimi
+                                    </Typography>
+                                    <DailyTempGraph>
+                                        {/* Yatay çizgiler */}
+                                        {[...Array(5)].map((_, i) => (
+                                            <Box
+                                                key={i}
+                                                className="temp-line"
+                                                sx={{ top: `${i * 25}%` }}
+                                            />
+                                        ))}
+                                        
+                                        {/* Sıcaklık noktaları ve bağlantı çizgileri */}
+                                        {weatherData.hourly.map((hour, index, array) => (
+                                            <React.Fragment key={index}>
+                                                {/* Bağlantı çizgisi */}
+                                                {index < array.length - 1 && (
+                                                    <Box
+                                                        className="temp-line-connect"
+                                                        sx={{
+                                                            left: `${(index / (array.length - 1)) * 100}%`,
+                                                            width: `${100 / (array.length - 1)}%`,
+                                                            top: `${100 - ((hour.temp - 15) / 20) * 100}%`,
+                                                            transform: `rotate(${Math.atan2(
+                                                                ((array[index + 1].temp - 15) / 20) * 100 - ((hour.temp - 15) / 20) * 100,
+                                                                100 / (array.length - 1)
+                                                            )}rad)`,
+                                                            transformOrigin: '0 50%'
+                                                        }}
+                                                    />
+                                                )}
+                                                {/* Sıcaklık noktası */}
+                                                <Box
+                                                    className="temp-point"
+                                                    sx={{
+                                                        left: `${(index / (array.length - 1)) * 100}%`,
+                                                        top: `${100 - ((hour.temp - 15) / 20) * 100}%`
+                                                    }}
+                                                />
+                                            </React.Fragment>
+                                        ))}
+                                    </DailyTempGraph>
+                                    
+                                    {/* Saat ve sıcaklık etiketleri */}
+                                    <Box sx={{ 
+                                        display: 'flex', 
+                                        justifyContent: 'space-between',
+                                        mt: 1,
+                                        px: 1
+                                    }}>
+                                        {weatherData.hourly.map((hour, index) => (
+                                            <Box key={index} sx={{ textAlign: 'center' }}>
+                                                <Typography variant="caption" sx={{ 
+                                                    opacity: 0.7, 
+                                                    display: 'block',
+                                                    fontSize: '0.75rem'
+                                                }}>
+                                                    {hour.time}
+                                                </Typography>
+                                                <Typography variant="body2" sx={{ 
+                                                    fontWeight: 600,
+                                                    fontSize: '0.875rem'
+                                                }}>
+                                                    {hour.temp}°
+                                                </Typography>
+                                            </Box>
+                                        ))}
+                                    </Box>
+                                </Box>
+
+                                {/* Günlük Tahminler */}
+                                <Typography variant="h6" sx={{ mb: 2, fontWeight: 600 }}>
+                                    7 Günlük Tahmin
+                                </Typography>
+                                <Box sx={{ 
+                                    display: 'flex',
+                                    gap: 2,
                                     overflowX: 'auto',
-                                    pb: 1,
+                                    pb: 2,
                                     '&::-webkit-scrollbar': {
                                         height: '4px'
                                     },
                                     '&::-webkit-scrollbar-track': {
-                                        background: 'rgba(255,255,255,0.1)'
+                                        backgroundColor: 'rgba(255,255,255,0.1)'
                                     },
                                     '&::-webkit-scrollbar-thumb': {
-                                        background: 'rgba(255,255,255,0.3)',
+                                        backgroundColor: 'rgba(255,255,255,0.3)',
                                         borderRadius: '4px'
                                     }
                                 }}>
-                                    {weatherData.hourly.map((hour, index) => (
-                                        <Box key={index} sx={{
-                                            minWidth: '80px',
-                                            p: 1.5,
-                                            textAlign: 'center',
-                                            borderRadius: 2,
-                                            background: 'rgba(255,255,255,0.1)',
-                                            backdropFilter: 'blur(10px)',
-                                            transition: 'transform 0.2s',
-                                            '&:hover': {
-                                                transform: 'translateY(-2px)',
-                                                background: 'rgba(255,255,255,0.15)'
-                                            }
-                                        }}>
-                                            {weatherTypes[hour.type].icon}
-                                            <Typography variant="h6" sx={{ fontWeight: 600, fontSize: '1.1rem' }}>
-                                                {hour.temp}°
-                                            </Typography>
-                                            <Typography variant="caption" sx={{ opacity: 0.8 }}>
-                                                {hour.time}
-                                            </Typography>
-                                        </Box>
-                                    ))}
-                                </Box>
-                            </CardContent>
-                        </Card>
-
-                        <Card sx={{ 
-                            borderRadius: 2,
-                            boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
-                            overflow: 'hidden',
-                            background: weatherTypes[currentWeather].gradient,
-                            color: 'white',
-                            position: 'relative'
-                        }}>
-                            <Box sx={{
-                                position: 'absolute',
-                                top: 0,
-                                left: 0,
-                                right: 0,
-                                bottom: 0,
-                                background: weatherTypes[currentWeather].overlay,
-                                zIndex: 1
-                            }} />
-                            <CardContent sx={{ position: 'relative', zIndex: 2 }}>
-                                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-                                    <Typography variant="h6" sx={{ 
-                                        fontWeight: 600,
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        gap: 1
-                                    }}>
-                                        {weatherTypes[currentWeather].icon}
-                                        Haftalık Tahmin
-                                    </Typography>
-                                    <Typography variant="subtitle1" sx={{ opacity: 0.9 }}>
-                                        İskenderun
-                                    </Typography>
-                                </Box>
-                                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
                                     {weatherData.daily.map((day, index) => (
-                                        <Box key={index} sx={{
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            justifyContent: 'space-between',
-                                            p: 1.5,
-                                            borderRadius: 2,
-                                            background: 'rgba(255,255,255,0.1)',
-                                            backdropFilter: 'blur(10px)',
-                                            transition: 'all 0.2s',
-                                            '&:hover': {
-                                                transform: 'translateX(4px)',
-                                                background: 'rgba(255,255,255,0.15)'
-                                            }
-                                        }}>
-                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                                        <WeatherCard key={index}>
+                                            <Typography variant="body2" sx={{ opacity: 0.8 }}>
+                                                {index === 0 ? 'Bugün' : 
+                                                 index === 1 ? 'Yarın' : 
+                                                 day.day.slice(0, 3)}
+                                            </Typography>
+                                            <Box sx={{ 
+                                                width: '40px',
+                                                height: '40px',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                my: 1
+                                            }}>
                                                 {weatherTypes[day.type].icon}
-                                                <Typography sx={{ fontWeight: 500 }}>
-                                                    {day.day}
-                                                </Typography>
                                             </Box>
-                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                                                <Typography variant="body1" sx={{ fontWeight: 600 }}>
+                                            <Box sx={{ textAlign: 'center' }}>
+                                                <Typography variant="body1" sx={{ fontWeight: 700 }}>
                                                     {day.high}°
                                                 </Typography>
-                                                <Typography variant="caption" sx={{ opacity: 0.8 }}>
+                                                <Typography variant="body2" sx={{ opacity: 0.7 }}>
                                                     {day.low}°
                                                 </Typography>
                                             </Box>
-                                        </Box>
+                                        </WeatherCard>
                                     ))}
                                 </Box>
                             </CardContent>
@@ -1045,17 +1552,17 @@ const Dashboard: React.FC = () => {
                                     justifyContent: 'space-between',
                                     mb: 3
                                 }}>
-                                    <Typography variant="h6" sx={{ 
-                                        fontWeight: 700,
-                                        color: '#1a237e',
-                                        display: 'flex',
-                                        alignItems: 'center',
+                                <Typography variant="h6" sx={{ 
+                                    fontWeight: 700,
+                                    color: '#1a237e',
+                                    display: 'flex',
+                                    alignItems: 'center',
                                         gap: 1,
                                         fontSize: '1.25rem'
-                                    }}>
+                                }}>
                                         <RestaurantIcon sx={{ fontSize: 24 }} />
                                         YEMEK TAKVİMİ
-                                    </Typography>
+                                </Typography>
                                     <Typography variant="body1" sx={{ 
                                         color: '#1a237e',
                                         display: 'flex',
@@ -1219,7 +1726,7 @@ const Dashboard: React.FC = () => {
                                                     {dummyMeals[0].meals.breakfast.menu}
                                                 </Typography>
                                             </Box>
-                                        </CardContent>
+                            </CardContent>
                                     </MealCard>
                                 </Grid>
 
@@ -1232,17 +1739,17 @@ const Dashboard: React.FC = () => {
                                             background: 'linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%)'
                                         }}>
                                             <Box>
-                                                <Typography variant="h6" sx={{ 
+                                <Typography variant="h6" sx={{ 
                                                     fontSize: 20, 
-                                                    fontWeight: 700, 
+                                    fontWeight: 700,
                                                     mb: 1,
-                                                    display: 'flex',
-                                                    alignItems: 'center',
-                                                    gap: 1
-                                                }}>
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: 1
+                                }}>
                                                     <RestaurantIcon sx={{ fontSize: 18 }} />
                                                     Öğle Yemeği
-                                                </Typography>
+                                </Typography>
                                                 <Typography sx={{ 
                                                     fontSize: 14, 
                                                     opacity: 0.95, 
@@ -1261,11 +1768,11 @@ const Dashboard: React.FC = () => {
                                                     lineHeight: 1.6
                                                 }}>
                                                     {dummyMeals[0].meals.lunch.menu}
-                                                </Typography>
-                                            </Box>
-                                        </CardContent>
+                                                    </Typography>
+                                                </Box>
+                            </CardContent>
                                     </MealCard>
-                                </Grid>
+                    </Grid>
 
                                 {/* Akşam Yemeği Kartı */}
                                 <Grid item xs={12} md={4}>
@@ -1276,17 +1783,17 @@ const Dashboard: React.FC = () => {
                                             background: 'linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%)'
                                         }}>
                                             <Box>
-                                                <Typography variant="h6" sx={{ 
+                                <Typography variant="h6" sx={{ 
                                                     fontSize: 20, 
-                                                    fontWeight: 700, 
+                                    fontWeight: 700,
                                                     mb: 1,
-                                                    display: 'flex',
-                                                    alignItems: 'center',
-                                                    gap: 1
-                                                }}>
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: 1
+                                }}>
                                                     <RestaurantIcon sx={{ fontSize: 18 }} />
                                                     Akşam Yemeği
-                                                </Typography>
+                                </Typography>
                                                 <Typography sx={{ 
                                                     fontSize: 14, 
                                                     opacity: 0.95, 
@@ -1307,12 +1814,132 @@ const Dashboard: React.FC = () => {
                                                     {dummyMeals[0].meals.dinner.menu}
                                                 </Typography>
                                             </Box>
-                                        </CardContent>
+                                            </CardContent>
                                     </MealCard>
                                 </Grid>
                             </Grid>
                         )}
                     </Grid>
+                </Grid>
+
+                {/* Yaklaşan Etkinlikler */}
+                <Grid item xs={12}>
+                    <Card sx={{ 
+                        borderRadius: 2,
+                        boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
+                        p: 3
+                    }}>
+                        <Box sx={{ 
+                            display: 'flex', 
+                            justifyContent: 'space-between', 
+                            alignItems: 'center', 
+                            mb: 3 
+                        }}>
+                            <Typography variant="h6" sx={{ 
+                                fontWeight: 700,
+                                color: '#1a237e',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: 1
+                            }}>
+                                <NotificationsIcon />
+                                Yaklaşan Etkinlikler
+                            </Typography>
+                            <Button 
+                                variant="outlined" 
+                                color="primary"
+                                endIcon={<ArrowForwardIcon />}
+                                onClick={() => navigate('/events')}
+                            >
+                                Tümünü Gör
+                            </Button>
+                        </Box>
+
+                        {/* Event List */}
+                        <Box>
+                            {sliderItems.map((item, index) => (
+                                <EventListItem key={index} color={item.category.color}>
+                                    <Grid container alignItems="center" spacing={2}>
+                                        <Grid item>
+                                            <Avatar sx={{ 
+                                                bgcolor: `${item.category.color}15`,
+                                                color: item.category.color,
+                                                width: 48,
+                                                height: 48
+                                            }}>
+                                                {item.category.icon}
+                                            </Avatar>
+                                        </Grid>
+                                        <Grid item xs>
+                                            <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
+                                                <Box>
+                                                    <Typography variant="subtitle1" sx={{ 
+                                                        fontWeight: 600,
+                                                        color: '#1a237e',
+                                                        mb: 0.5
+                                                    }}>
+                                                        {item.title}
+                                                    </Typography>
+                                                    <Typography variant="body2" sx={{ 
+                                                        color: '#666',
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        gap: 1
+                                                    }}>
+                                                        <AccessTimeIcon sx={{ fontSize: 16 }} />
+                                                        {item.date}
+                                                    </Typography>
+                                                </Box>
+                                                <AvatarGroup>
+                                                    {[...Array(3)].map((_, i) => (
+                                                        <Avatar
+                                                            key={i}
+                                                            src={`https://i.pravatar.cc/150?img=${index * 3 + i + 1}`}
+                                                            sx={{ 
+                                                                width: 32, 
+                                                                height: 32,
+                                                                border: '2px solid #fff'
+                                                            }}
+                                                        />
+                                                    ))}
+                                                </AvatarGroup>
+                                            </Box>
+                                            <Typography variant="body2" sx={{ 
+                                                mt: 1,
+                                                color: '#666'
+                                            }}>
+                                                {item.description}
+                                            </Typography>
+                                            <Box sx={{ 
+                                                display: 'flex', 
+                                                alignItems: 'center', 
+                                                gap: 1,
+                                                mt: 2
+                                            }}>
+                                                <Chip
+                                                    label={item.category.name}
+                                                    size="small"
+                                                    sx={{
+                                                        bgcolor: `${item.category.color}15`,
+                                                        color: item.category.color,
+                                                        fontWeight: 600
+                                                    }}
+                                                />
+                                                <Typography variant="caption" sx={{ 
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    gap: 0.5,
+                                                    color: '#666'
+                                                }}>
+                                                    {item.stats.label}: <strong>{item.stats.value}</strong>
+                                                </Typography>
+                                            </Box>
+                                        </Grid>
+                                    </Grid>
+                                </EventListItem>
+                            ))}
+                        </Box>
+                    </Card>
                 </Grid>
 
                 {/* Haberler Grid */}
@@ -1324,157 +1951,85 @@ const Dashboard: React.FC = () => {
                                 {categoryPosts.map((post: Post) => (
                                     <Grid item xs={12} md={6} key={post.id}>
                                         <NewsCard>
-                                            {post.image && (
-                                                <CardMedia
-                                                    component="img"
+                                        {post.image && (
+                                            <CardMedia
+                                                component="img"
                                                     height={category === 'isg' ? "400" : "300"}
-                                                    image={post.image}
-                                                    alt={post.title}
-                                                    sx={{ 
+                                                image={post.image}
+                                                alt={post.title}
+                                                sx={{ 
                                                         objectFit: category === 'isg' ? 'contain' : 'cover',
                                                         bgcolor: category === 'isg' ? '#f5f5f5' : 'transparent',
                                                         borderBottom: '1px solid #eee',
                                                         p: category === 'isg' ? 2 : 0
-                                                    }}
-                                                />
-                                            )}
-                                            <CardContent sx={{ p: 3 }}>
+                                                }}
+                                            />
+                                        )}
+                                        <CardContent sx={{ p: 3 }}>
                                                 <Box sx={{ 
                                                     display: 'flex', 
                                                     alignItems: 'center', 
                                                     mb: 2,
                                                     justifyContent: category === 'isg' ? 'center' : 'flex-start'
                                                 }}>
-                                                    <Avatar 
-                                                        src={post.author?.avatar}
-                                                        sx={{ width: 24, height: 24, mr: 1 }}
-                                                    />
-                                                    <Typography variant="caption" sx={{ 
-                                                        color: '#666',
-                                                        fontSize: '0.75rem',
-                                                        fontWeight: 500
-                                                    }}>
-                                                        {format(new Date(post.created_at), 'dd MMMM yyyy', { locale: tr })}
-                                                    </Typography>
-                                                </Box>
-                                                <Typography variant="h6" sx={{ 
-                                                    fontWeight: 700,
+                                                <Avatar 
+                                                    src={post.author?.avatar}
+                                                    sx={{ width: 24, height: 24, mr: 1 }}
+                                                />
+                                                <Typography variant="caption" sx={{ 
+                                                    color: '#666',
+                                                    fontSize: '0.75rem',
+                                                    fontWeight: 500
+                                                }}>
+                                                    {format(new Date(post.created_at), 'dd MMMM yyyy', { locale: tr })}
+                                                </Typography>
+                                            </Box>
+                                            <Typography variant="h6" sx={{ 
+                                                fontWeight: 700,
                                                     fontSize: category === 'isg' ? '1.5rem' : '1.25rem',
-                                                    mb: 2,
-                                                    lineHeight: 1.3,
+                                                mb: 2,
+                                                lineHeight: 1.3,
                                                     color: category === 'isg' ? '#d32f2f' : '#1a237e',
                                                     textAlign: category === 'isg' ? 'center' : 'left'
-                                                }}>
-                                                    {post.title}
-                                                </Typography>
-                                                <Typography sx={{
+                                            }}>
+                                                {post.title}
+                                            </Typography>
+                                            <Typography sx={{
                                                     color: category === 'isg' ? '#d32f2f' : '#424242',
                                                     fontSize: category === 'isg' ? '1.1rem' : '1rem',
-                                                    lineHeight: 1.6,
+                                                lineHeight: 1.6,
                                                     mb: 2,
                                                     fontWeight: category === 'isg' ? 600 : 400,
                                                     textAlign: category === 'isg' ? 'center' : 'left'
-                                                }}>
-                                                    {post.content}
-                                                </Typography>
+                                            }}>
+                                                {post.content}
+                                            </Typography>
                                                 <Box sx={{ 
                                                     display: 'flex', 
                                                     gap: 1,
                                                     justifyContent: category === 'isg' ? 'center' : 'flex-start'
                                                 }}>
-                                                    {post.tags?.map((tag, index) => (
-                                                        <Chip 
-                                                            key={index}
-                                                            label={tag}
-                                                            size="small"
-                                                            sx={{ 
-                                                                bgcolor: '#e3f2fd',
-                                                                color: '#1a237e',
-                                                                fontWeight: 500
-                                                            }}
-                                                        />
-                                                    ))}
-                                                </Box>
-                                            </CardContent>
-                                        </NewsCard>
+                                                {post.tags?.map((tag, index) => (
+                                                    <Chip 
+                                                        key={index}
+                                                        label={tag}
+                                                        size="small"
+                                                        sx={{ 
+                                                            bgcolor: '#e3f2fd',
+                                                            color: '#1a237e',
+                                                            fontWeight: 500
+                                                        }}
+                                                    />
+                                                ))}
+                                            </Box>
+                                        </CardContent>
+                                    </NewsCard>
                                     </Grid>
                                 ))}
                             </Grid>
                             <Box sx={{ mb: 4 }} />
                         </Grid>
                     ))}
-                </Grid>
-
-                {/* Duyuru Listesi Tamamı */}
-                <Grid item xs={12}>
-                    <Card sx={{ 
-                        mt: 3,
-                        borderRadius: 2,
-                        boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
-                        p: 3
-                    }}>
-                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-                            <Typography variant="h6" sx={{ 
-                                fontWeight: 700,
-                                color: '#1a237e',
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: 1
-                            }}>
-                                <NotificationsIcon />
-                                Tüm Duyurular
-                            </Typography>
-                            <Button 
-                                variant="outlined" 
-                                color="primary"
-                                endIcon={<ArrowForwardIcon />}
-                            >
-                                Tümünü Gör
-                            </Button>
-                        </Box>
-                        <Grid container spacing={3}>
-                            {sliderItems.map((item) => (
-                                <Grid item xs={12} md={4} key={item.id}>
-                                    <NewsCard>
-                                        <CardMedia
-                                            component="img"
-                                            height="200"
-                                            image={item.image}
-                                            alt={item.title}
-                                            sx={{ objectFit: 'cover' }}
-                                        />
-                                        <CardContent sx={{ p: 3 }}>
-                                            <Typography variant="caption" sx={{ 
-                                                color: '#666',
-                                                fontSize: '0.75rem',
-                                                fontWeight: 500,
-                                                mb: 1,
-                                                display: 'block'
-                                            }}>
-                                                {item.date}
-                                            </Typography>
-                                            <Typography variant="h6" sx={{ 
-                                                fontWeight: 700,
-                                                fontSize: '1.1rem',
-                                                mb: 2,
-                                                lineHeight: 1.3,
-                                                color: '#1a237e'
-                                            }}>
-                                                {item.title}
-                                            </Typography>
-                                            <Typography sx={{
-                                                color: '#424242',
-                                                fontSize: '0.9rem',
-                                                lineHeight: 1.6
-                                            }}>
-                                                {item.description}
-                                            </Typography>
-                                        </CardContent>
-                                    </NewsCard>
-                                </Grid>
-                            ))}
-                        </Grid>
-                    </Card>
                 </Grid>
             </Grid>
         </Box>
